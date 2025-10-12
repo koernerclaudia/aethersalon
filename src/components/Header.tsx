@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
 import logoUrl from '../assets/Aethersalon.svg';
 
-
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,8 +50,6 @@ const Header: React.FC = () => {
               src={logoUrl}
               alt="Aethersalon Logo"
               className="h-12 w-auto"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 300 }}
             />
           </Link>
 
