@@ -1,0 +1,95 @@
+// Sample Products Data
+export const sampleProducts = [
+  {
+    id: 1,
+    name: 'Steampunk Uhr',
+    category: 'Accessoires',
+    image: 'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=400',
+    description: 'Handgefertigte Taschenuhr im viktorianischen Stil',
+    price: 89.99,
+  },
+  {
+    id: 2,
+    name: 'Victorian Lampe',
+    category: 'Beleuchtung',
+    image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400',
+    description: 'Elegante Lampe mit Messingdetails',
+    price: 149.99,
+  },
+  {
+    id: 3,
+    name: 'Zahnrad Skulptur',
+    category: 'Kunst',
+    image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',
+    description: 'Kunstvolle Skulptur aus recycelten Zahnrädern',
+    price: 199.99,
+  },
+  {
+    id: 4,
+    name: 'Messing Kompass',
+    category: 'Accessoires',
+    image: 'https://images.unsplash.com/photo-1504805572947-34fad45aed93?w=400',
+    description: 'Funktionsfähiger Kompass mit Gravur',
+    price: 69.99,
+  },
+  {
+    id: 5,
+    name: 'Dampfmaschinen-Modell',
+    category: 'Modelle',
+    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400',
+    description: 'Detailgetreues Modell einer Dampfmaschine',
+    price: 299.99,
+  },
+  {
+    id: 6,
+    name: 'Victorian Wanduhr',
+    category: 'Uhren',
+    image: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400',
+    description: 'Großformatige Wanduhr mit römischen Ziffern',
+    price: 179.99,
+  },
+];
+
+// Sample Events Data
+export const sampleEvents = [
+  {
+    id: 1,
+    title: 'Steampunk Convention 2025',
+    date: '15. März 2025',
+    location: 'Berlin',
+    description: 'Die größte Steampunk-Convention Deutschlands mit Ausstellern, Workshops und Shows.',
+    category: 'Convention',
+  },
+  {
+    id: 2,
+    title: 'Victorian Ball',
+    date: '22. April 2025',
+    location: 'München',
+    description: 'Ein eleganter Abend im viktorianischen Stil mit Tanz und Live-Musik.',
+    category: 'Ball',
+  },
+  {
+    id: 3,
+    title: 'Kunstausstellung',
+    date: '10. Mai 2025',
+    location: 'Hamburg',
+    description: 'Ausstellung zeitgenössischer Steampunk-Kunst und Skulpturen.',
+    category: 'Ausstellung',
+  },
+  {
+    id: 4,
+    title: 'Steampunk Markt',
+    date: '5. Juni 2025',
+    location: 'Köln',
+    description: 'Markt mit handgefertigten Steampunk-Artikeln und Kunsthandwerk.',
+    category: 'Markt',
+  },
+  {
+    id: 5,
+    title: 'Workshop: Zahnrad-Kunst',
+    date: '20. Juni 2025',
+    location: 'Frankfurt',
+    description: 'Hands-on Workshop zum Erstellen eigener Zahnrad-Skulpturen.',
+    category: 'Workshop',
+  },
+];
