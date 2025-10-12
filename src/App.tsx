@@ -19,7 +19,7 @@ const Datenschutz: React.FC = () => <div className="min-h-screen pt-24 px-4"><di
 function App() {
   return (
     <ThemeProvider>
-      <Router>
+     <Router basename={import.meta.env.BASE_URL}>
         <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors duration-300">
           <Gears />
           <Header />
