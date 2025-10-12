@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import EventList from '../components/EventList';
 import { sampleProducts, sampleEvents } from '../data/sampleData';
+import logoUrl from '../assets/Aethersalon.svg';
+import bgUrl from '../assets/steampunkroom.jpg';
+
 
 const Home: React.FC = () => {
   // Animation variants
@@ -42,7 +45,7 @@ const Home: React.FC = () => {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(/steampunkroom.jpg)',
+            backgroundImage: `url(${bgUrl})`,
             // 'url(https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=1600)',
             filter: 'brightness(0.4)',
           }}
@@ -55,7 +58,7 @@ const Home: React.FC = () => {
             className="mb-8"
           >
             <img
-              src="/Aethersalon.svg"
+              src={logoUrl}
               alt="Aethersalon 1889 Logo"
               className="w-64 md:w-96 xl:w-[40rem] mx-auto drop-shadow-2xl"
             />
