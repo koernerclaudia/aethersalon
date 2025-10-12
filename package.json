@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "build:gh": "vite build --base=/aethersalon/",
     "preview:gh": "vite preview --base=/aethersalon/ --port 4173",
-    "preview": "vite preview --port 4173",
+    "preview": "vite preview --port 4173"
   },
   "dependencies": {
     "axios": "^1.6.2",
