@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
+import logoUrl from '../assets/Aethersalon.svg';
+
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -45,8 +47,8 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
-            <motion.img
-              src="/Aethersalon.svg"
+            <img
+              src={logoUrl}
               alt="Aethersalon Logo"
               className="h-12 w-auto"
               whileHover={{ scale: 1.05 }}
