@@ -14,9 +14,29 @@ function normalize(records: AirtableRecord[]) {
   return records.map((r, idx) => {
     const f = r.fields || {};
     const title = f.Titel || f.Title || f.name || `Veranstaltung ${idx + 1}`;
-    // Datum might be an ISO string or a date-only string
+    // Datum might be an ISO string or a date-only string. We'll try to parse and
+    // format it in German locale (e.g. "15. März 2025"). If parsing fails,
+    // return the original string.
     const dateRaw = f.Datum || f.datum || f.Date || '';
-    const date = typeof dateRaw === 'string' ? dateRaw : '';
+    let date = '';
+    if (typeof dateRaw === 'string' && dateRaw) {
+      const parsed = new Date(dateRaw);
+      if (!Number.isNaN(parsed.getTime())) {
+        try {
+          date = new Intl.DateTimeFormat('de-DE', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }).format(parsed);
+        } catch (e) {
+          // Fallback to the raw string if Intl formatting fails
+          date = dateRaw;
+        }
+      } else {
+        date = dateRaw;
+      }
+    }
+
     const location = f.Ort || f.Location || f['Veranstaltungsort'] || '';
 
     return {
