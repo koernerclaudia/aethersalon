@@ -77,10 +77,14 @@ const ProductDetails: React.FC = () => {
             {/* thumbnail gallery with placeholders for up to 3 additional images */}
             <div className="mt-4 grid grid-cols-3 gap-3">
               {(() => {
-                // derive gallery images from raw attachments if present, else use the main image as placeholder
-                const attachments: any[] = (product as any)?.raw?.fields?.['Produkt-Bild'] || [];
+                // derive gallery images from Airtable fields in order of preference:
+                // 1) 'Weitere Bilder' (additional images)
+                // 2) fallback to 'Produkt-Bild'
+                // 3) finally use the main product.image as placeholder
+                const rawFields = (product as any)?.raw?.fields || {};
+                const attachments: any[] = rawFields['Weitere Bilder'] || rawFields['Produkt-Bild'] || [];
                 const gallery = attachments.length > 0
-                  ? attachments.map((a) => a.url || a.thumbnails?.large?.url || '')
+                  ? attachments.map((a) => a?.url || a?.thumbnails?.large?.url || '')
                   : [product.image, product.image, product.image];
 
                 return gallery.slice(0, 3).map((src, idx) => (
