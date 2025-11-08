@@ -107,6 +107,15 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                   <div>Bestand: <span className="font-medium">{product.stock}</span></div>
                 )}
               </div>
+              <div className="mt-4">
+                <Link
+                  to={`/products/${product.id}`}
+                  className="inline-block px-4 py-2 bg-brass text-dark-bg font-medium rounded hover:bg-brass/90 transition-colors"
+                  aria-label={`Details zu ${product.name}`}
+                >
+                  Details ansehen
+                </Link>
+              </div>
             </div>
           </motion.div>
         ))}
