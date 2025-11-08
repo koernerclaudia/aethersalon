@@ -116,14 +116,12 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
                   </span>
                 </div>
               </div>
-              {!showAll && (
-                <Link
-                  to={`/events/${event.id}`}
-                  className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
-                >
-                  Mehr erfahren
-                </Link>
-              )}
+              <Link
+                to={`/events/${event.id}`}
+                className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+              >
+                Mehr erfahren
+              </Link>
             </div>
           </motion.div>
         ))}
