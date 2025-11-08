@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import EventList from '../components/EventList';
 import { sampleEvents } from '../data/sampleData';
+
+type EventItem = {
+  id: number;
+  title: string;
+  date: string;
+  location: string;
+};
 
 const Events: React.FC = () => {
   const fadeInUp = {
@@ -9,9 +16,40 @@ const Events: React.FC = () => {
     visible: { opacity: 1, y: 0 },
   };
 
+  const [events, setEvents] = useState<EventItem[]>(sampleEvents);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/events');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (payload?.events && Array.isArray(payload.events) && payload.events.length > 0) {
+          if (!mounted) return;
+          setEvents(payload.events);
+        }
+      } catch (err: any) {
+        console.warn('Failed to fetch /api/events, using sample data:', err?.message || err);
+        if (!mounted) return;
+        setError('Remote events could not be loaded — showing sample data.');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen pt-24 px-4 pb-20">
-      <div className="container mx-auto">
+    <div className="min-h-screen pt-24 px-8 pb-20">
+      <div className="mx-auto max-w-5xl">
         {/* Page Header */}
         <motion.div
           initial="hidden"
@@ -31,6 +69,14 @@ const Events: React.FC = () => {
         {/* Victorian Divider */}
         <div className="victorian-divider my-12" />
 
+        {/* Status */}
+        {loading && (
+          <div className="text-center mb-6 text-sm text-dark-text/70">Lade Veranstaltungen…</div>
+        )}
+        {error && (
+          <div className="text-center mb-6 text-sm text-red-500">{error}</div>
+        )}
+
         {/* Events List */}
         <motion.div
           initial="hidden"
@@ -38,7 +84,7 @@ const Events: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <EventList events={sampleEvents} showAll={true} />
+          <EventList events={events} showAll={true} />
         </motion.div>
 
         {/* Info Section */}
