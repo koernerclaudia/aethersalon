@@ -48,6 +48,26 @@ function normalize(records: AirtableRecord[]) {
 
     // Description & short description
     const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
+    const shortDescription = f.Kurzbeschreibung || f.Kurzbeschreibung || '';
+
+    // Material / condition (Beschaffenheit)
+    const material = f.Beschaffenheit || f.Beschaffenheit || '';
+
+    // SKU / Artikelnummer
+    const sku = f.Artikelnummer || f['Artikelnummer'] || '';
+
+    // Stock / Bestand
+    const stock = typeof f.Bestand === 'number' ? f.Bestand : parseInt(String(f.Bestand || ''), 10) || 0;
+
+    // Manufacturer / Hergestellt von / Herstellername (may be array of names or linked record ids)
+    let manufacturer: string | undefined = undefined;
+    if (Array.isArray(f['Herstellername']) && f['Herstellername'].length > 0) {
+      manufacturer = String(f['Herstellername'][0]);
+    } else if (Array.isArray(f['Hergestellt von']) && f['Hergestellt von'].length > 0) {
+      manufacturer = String(f['Hergestellt von'][0]);
+    } else if (typeof f['Herstellername'] === 'string') {
+      manufacturer = f['Herstellername'];
+    }
 
     // Price parsing (Einzelpreis)
     let price: number | undefined = undefined;
@@ -61,6 +81,11 @@ function normalize(records: AirtableRecord[]) {
       category,
       image: image || placeholderImage,
       description,
+      shortDescription,
+      material,
+      sku,
+      stock,
+      manufacturer,
       price,
       rawId: r.id,
       raw: f,
