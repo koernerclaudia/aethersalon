@@ -12,24 +12,57 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_PRODUCTS_TABLE = process.env.AIRTABLE_PRODUCTS_TABLE;
 
 function normalize(records: AirtableRecord[]) {
+  // Map the German Airtable schema the user provided to our product shape.
+  // If a field is missing we'll use reasonable fallbacks.
+  const placeholderImage =
+    'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=400';
+
   return records.map((r, idx) => {
     const f = r.fields || {};
-    // Try several common field names used in Airtable setups
-    const name = f.Name || f.name || f.title || f.Title || 'Untitled Produkt';
-    const category = f.Category || f.category || f.Kategorie || 'Unkategorisiert';
-    // Images in Airtable are usually an array of objects with a `url` property
+
+    // Name/title (Airtable field: "Titel")
+    const name =
+      f.Titel || f.TITLE || f.Title || f.Name || f.name || `Produkt ${idx + 1}`;
+
+    // Category: prefer the explicit field "Art des Produkts", else use Produktgruppe (array of linked record ids)
+    let category = '';
+    if (f['Art des Produkts']) category = String(f['Art des Produkts']);
+    else if (Array.isArray(f.Produktgruppe) && f.Produktgruppe.length > 0)
+      category = String(f.Produktgruppe[0]);
+    else category = 'Unkategorisiert';
+
+    // Image: the example JSON didn't include attachments; try common attachment fields first.
     let image: string | undefined = undefined;
-    if (Array.isArray(f.Images) && f.Images[0] && f.Images[0].url) image = f.Images[0].url;
-    if (!image && Array.isArray(f.Image) && f.Image[0] && f.Image[0].url) image = f.Image[0].url;
-    if (!image && typeof f.Image === 'string') image = f.Image;
+    const attachmentFields = ['Bilder', 'Images', 'Image', 'Attachment', 'Attachments'];
+    for (const k of attachmentFields) {
+      const v = f[k];
+      if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
+        image = v[0].url;
+        break;
+      }
+      if (typeof v === 'string' && v.startsWith('http')) {
+        image = v;
+        break;
+      }
+    }
+
+    // Description & short description
+    const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
+
+    // Price parsing (Einzelpreis)
+    let price: number | undefined = undefined;
+    if (typeof f.Einzelpreis === 'number') price = f.Einzelpreis;
+    else if (typeof f.Einzelpreis === 'string') price = parseFloat(f.Einzelpreis.replace(',', '.')) || undefined;
 
     return {
-      id: Number(r.id) || idx + 1,
+      // keep a stable numeric id for the UI (ProductGrid expects numbers in this codebase)
+      id: idx + 1,
       name,
       category,
-      image: image || '',
-      description: f.Description || f.description || f.Beschreibung || '',
-      price: typeof f.Price === 'number' ? f.Price : parseFloat(f.Price || '') || undefined,
+      image: image || placeholderImage,
+      description,
+      price,
+      rawId: r.id,
       raw: f,
     };
   });
