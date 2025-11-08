@@ -8,6 +8,7 @@ type EventItem = {
   title: string;
   date: string;
   location: string;
+  raw?: any;
 };
 
 const Events: React.FC = () => {
@@ -19,6 +20,7 @@ const Events: React.FC = () => {
   const [events, setEvents] = useState<EventItem[]>(sampleEvents);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('all');
 
   useEffect(() => {
     let mounted = true;
@@ -46,6 +48,53 @@ const Events: React.FC = () => {
       mounted = false;
     };
   }, []);
+
+  // try to derive a Date object for an event; prefers raw.Datum (ISO) but falls back to
+  // parsing the formatted `date` string (supports German month names used in sample data)
+  function parseEventDate(e: EventItem): Date | null {
+    const raw = (e as any).raw || {};
+    const maybe = raw.Datum || raw.datum || raw.Date || raw.date || e.date || '';
+    if (!maybe) return null;
+
+    // First, try native parsing (ISO or similar)
+    const d1 = new Date(maybe);
+    if (!Number.isNaN(d1.getTime())) return d1;
+
+    // Fallback: try to parse German localized format like '15. März 2025'
+    const monthMap: Record<string, number> = {
+      Januar: 0, Februar: 1, März: 2, Maerz: 2, April: 3, Mai: 4, Juni: 5, Juli: 6, August: 7, September: 8, Oktober: 9, November: 10, Dezember: 11,
+      Mär:2, Mrz:2
+    };
+    const m = String(maybe).trim();
+    // match patterns like '15. März 2025' or '15 März 2025'
+    const re = /^(\d{1,2})\.??\s+([A-Za-zäöüÄÖÜß]+)\s+(\d{4})$/;
+    const match = m.match(re);
+    if (match) {
+      const day = parseInt(match[1], 10);
+      const monthName = match[2];
+      const year = parseInt(match[3], 10);
+      const monthIndex = monthMap[monthName] ?? monthMap[monthName.replace(/ä/g,'a').replace(/ö/g,'o').replace(/ü/g,'u')] ;
+      if (typeof monthIndex === 'number') {
+        return new Date(year, monthIndex, day);
+      }
+    }
+
+    return null;
+  }
+
+  const today = new Date();
+  // normalize today's time to start of day for comparisons
+  today.setHours(0,0,0,0);
+
+  const filteredEvents = events.filter((e) => {
+    if (filter === 'all') return true;
+    const d = parseEventDate(e);
+    if (!d) return filter === 'upcoming'; // unknown dates treated as upcoming
+    // normalize
+    d.setHours(0,0,0,0);
+    if (filter === 'upcoming') return d >= today;
+    return d < today;
+  });
 
   return (
     <div className="min-h-screen pt-24 px-8 pb-20">
@@ -77,6 +126,28 @@ const Events: React.FC = () => {
           <div className="text-center mb-6 text-sm text-red-500">{error}</div>
         )}
 
+        {/* Filter controls */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+          >
+            Alle
+          </button>
+          <button
+            onClick={() => setFilter('upcoming')}
+            className={`px-4 py-2 rounded ${filter === 'upcoming' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+          >
+            Kommende
+          </button>
+          <button
+            onClick={() => setFilter('past')}
+            className={`px-4 py-2 rounded ${filter === 'past' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+          >
+            Vergangene
+          </button>
+        </div>
+
         {/* Events List */}
         <motion.div
           initial="hidden"
@@ -84,7 +155,7 @@ const Events: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <EventList events={events} showAll={true} />
+          <EventList events={filteredEvents} showAll={true} />
         </motion.div>
 
         {/* Info Section */}
