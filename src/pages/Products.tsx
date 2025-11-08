@@ -1,13 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import { sampleProducts } from '../data/sampleData';
+
+type Product = {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+  description?: string;
+  shortDescription?: string;
+  material?: string;
+  sku?: string;
+  stock?: number;
+  manufacturer?: string;
+  price?: number;
+};
 
 const Products: React.FC = () => {
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 },
   };
+
+  const [products, setProducts] = useState<Product[]>(sampleProducts);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (payload?.products && Array.isArray(payload.products) && payload.products.length > 0) {
+          if (!mounted) return;
+          setProducts(payload.products);
+        }
+      } catch (err: any) {
+        console.warn('Failed to fetch /api/products, using sample data:', err?.message || err);
+        if (!mounted) return;
+        setError('Remote products could not be loaded — showing sample data.');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <div className="min-h-screen pt-24 px-4 pb-20">
@@ -31,6 +76,14 @@ const Products: React.FC = () => {
         {/* Victorian Divider */}
         <div className="victorian-divider my-12" />
 
+        {/* Status */}
+        {loading && (
+          <div className="text-center mb-6 text-sm text-dark-text/70">Lade Produkte…</div>
+        )}
+        {error && (
+          <div className="text-center mb-6 text-sm text-red-500">{error}</div>
+        )}
+
         {/* Products Grid */}
         <motion.div
           initial="hidden"
@@ -38,7 +91,7 @@ const Products: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <ProductGrid products={sampleProducts} showAll={true} />
+          <ProductGrid products={products} showAll={true} />
         </motion.div>
 
         {/* Info Section */}

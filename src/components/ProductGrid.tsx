@@ -3,10 +3,17 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 interface Product {
-  id: number;
+  id: number | string;
   name: string;
   category: string;
   image: string;
+  description?: string;
+  shortDescription?: string;
+  material?: string;
+  sku?: string;
+  stock?: number;
+  manufacturer?: string;
+  price?: number;
 }
 
 interface ProductGridProps {
@@ -53,10 +60,39 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
               />
             </div>
             <div className="p-6 bg-dark-bg/90 dark:bg-dark-bg/90">
-              <span className="text-sm text-brass mb-2 block">{product.category}</span>
-              <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text">
-                {product.name}
-              </h3>
+              <div className="flex items-start justify-between">
+                <div>
+                  <span className="text-sm text-brass mb-2 block">{product.category}</span>
+                  <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text">
+                    {product.name}
+                  </h3>
+                  {product.shortDescription && (
+                    <p className="text-sm text-dark-text/80 mt-2">{product.shortDescription}</p>
+                  )}
+                </div>
+                <div className="text-right ml-4">
+                  {product.price !== undefined && (
+                    <div className="text-lg font-semibold text-dark-text mb-1">
+                      {typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}
+                    </div>
+                  )}
+                  {product.sku && (
+                    <div className="text-xs text-dark-text/70">SKU: {product.sku}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 text-sm text-dark-text/80">
+                {product.material && (
+                  <div className="mb-1">Material: <span className="font-medium">{product.material}</span></div>
+                )}
+                {product.manufacturer && (
+                  <div className="mb-1">Hersteller: <span className="font-medium">{product.manufacturer}</span></div>
+                )}
+                {typeof product.stock === 'number' && (
+                  <div>Bestand: <span className="font-medium">{product.stock}</span></div>
+                )}
+              </div>
             </div>
           </motion.div>
         ))}
