@@ -55,8 +55,8 @@ const Products: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-24 px-4 pb-20">
-      <div className="container mx-auto">
+    <div className="min-h-screen pt-24 px-8 pb-20">
+      <div className="mx-auto max-w-5xl">
         {/* Page Header */}
         <motion.div
           initial="hidden"
