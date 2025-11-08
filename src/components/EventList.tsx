@@ -84,10 +84,10 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
               </div>
               {!showAll && (
                 <Link
-                  to="/events"
-                  className="mt-4 md:mt-0 text-brass hover:text-brass/80 transition-colors font-semibold"
+                  to={`/events/${event.id}`}
+                  className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
                 >
-                  Details →
+                  Mehr erfahren
                 </Link>
               )}
             </div>
