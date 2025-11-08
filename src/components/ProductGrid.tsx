@@ -100,14 +100,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                   )}
                 </div>
                 <div className="text-right ml-4">
-                  {product.price !== undefined && (
-                    <div className="text-lg font-semibold text-dark-text mb-1">
-                      {typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}
-                    </div>
-                  )}
-                  {product.sku && (
-                    <div className="text-xs text-dark-text/70">SKU: {product.sku}</div>
-                  )}
+                    {product.price !== undefined && (
+                      <div className="text-lg font-semibold text-dark-text mb-1">
+                        {typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -115,9 +112,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                 {product.material && (
                   <div className="mb-1">Material: <span className="font-medium">{product.material}</span></div>
                 )}
-                {product.manufacturer && (
-                  <div className="mb-1">Hersteller: <span className="font-medium">{product.manufacturer}</span></div>
-                )}
+                {/* manufacturer intentionally omitted per request */}
                 {typeof product.stock === 'number' && (
                   <div>Bestand: <span className="font-medium">{product.stock}</span></div>
                 )}
