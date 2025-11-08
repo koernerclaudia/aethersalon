@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import { sampleProducts } from '../data/sampleData';
@@ -8,6 +8,45 @@ const Products: React.FC = () => {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 },
   };
+
+  const [products, setProducts] = useState<any[]>(sampleProducts);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const load = async () => {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) throw new Error(`Proxy error: ${res.status}`);
+        const json = await res.json();
+        if (mounted && Array.isArray(json.products) && json.products.length > 0) {
+          setProducts(json.products);
+        }
+      } catch (err: any) {
+        // fallback to sampleProducts (already set)
+        // eslint-disable-next-line no-console
+        console.warn('Could not load Airtable products:', err?.message || err);
+        setError(err?.message || 'Failed to load products');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Normalize to the ProductGrid shape (id:number, name, category, image)
+  const normalized = products.map((p: any, idx: number) => ({
+    id: typeof p.id === 'number' ? p.id : idx + 1,
+    name: p.name || p.Name || p.title || 'Unnamed',
+    category: p.category || p.Category || p.Kategorie || 'Allgemein',
+    image: p.image || (p.raw && (p.raw.Images || p.raw.Bilder)?.[0]?.url) || p.imageUrl || '',
+  }));
 
   return (
     <div className="min-h-screen pt-24 px-4 pb-20">
@@ -38,7 +77,9 @@ const Products: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <ProductGrid products={sampleProducts} showAll={true} />
+          {loading && <p className="text-center">Lade Produkte…</p>}
+          {error && <p className="text-center text-red-500">Fehler: {error}</p>}
+          {!loading && <ProductGrid products={normalized} showAll={true} />}
         </motion.div>
 
         {/* Info Section */}

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import EventList from '../components/EventList';
 import { sampleProducts, sampleEvents } from '../data/sampleData';
-import logoUrl from '../assets/Aethersalon.svg';
+import heroUrl from '../assets/Aethersalon.svg'
 import bgUrl from '../assets/steampunkroom.jpg';
 
 
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
             className="mb-8"
           >
             <img
-              src={logoUrl}
+              src={heroUrl}
               alt="Aethersalon 1889 Logo"
               className="w-64 md:w-96 xl:w-[40rem] mx-auto drop-shadow-2xl"
             />
