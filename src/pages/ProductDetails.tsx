@@ -81,7 +81,10 @@ const ProductDetails: React.FC = () => {
                 // 1) 'Weitere Bilder' (additional images)
                 // 2) fallback to 'Produkt-Bild'
                 // 3) finally use the main product.image as placeholder
-                const rawFields = (product as any)?.raw?.fields || {};
+                // note: in the normalized product from the proxy we stored `raw: f` where `f` is the
+                // Airtable `fields` object. So `product.raw` IS the fields map (not an object with a
+                // `fields` property). Handle both shapes defensively.
+                const rawFields = (product as any)?.raw?.fields || (product as any)?.raw || {};
                 const attachments: any[] = rawFields['Weitere Bilder'] || rawFields['Produkt-Bild'] || [];
                 const gallery = attachments.length > 0
                   ? attachments.map((a) => a?.url || a?.thumbnails?.large?.url || '')
