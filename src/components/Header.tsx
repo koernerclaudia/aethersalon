@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import logoUrl from '../assets/logo-wordmark.svg';
+import logoUrl from '../assets/Aethersalon.svg';
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
             <img
               src={logoUrl}
               alt="Aethersalon Logo"
-              className="h-8 w-auto"
+              className="h-12 w-auto"
             />
           </Link>
 
@@ -175,7 +175,6 @@ const Header: React.FC = () => {
           )}
         </AnimatePresence>
       </nav>
-      
     </header>
   );
 };
