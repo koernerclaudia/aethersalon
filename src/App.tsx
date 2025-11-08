@@ -7,6 +7,7 @@ import Gears from './components/Gears';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Events from './pages/Events';
+import ProductDetails from './pages/ProductDetails';
 
 // Placeholder pages - to be implemented
 const About: React.FC = () => <div className="min-h-screen pt-24 px-4"><div className="container mx-auto"><h1 className="text-4xl font-heading text-dark-text dark:text-dark-text">Über Mich</h1><p className="mt-4 text-dark-text dark:text-dark-text">Coming soon...</p></div></div>;
@@ -29,6 +30,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/events" element={<Events />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/history" element={<History />} />
               <Route path="/workshop" element={<Workshop />} />
               <Route path="/contact" element={<Contact />} />
