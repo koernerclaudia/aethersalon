@@ -31,20 +31,30 @@ function normalize(records: AirtableRecord[]) {
       category = String(f.Produktgruppe[0]);
     else category = 'Unkategorisiert';
 
-    // Image: the example JSON didn't include attachments; try common attachment fields first.
-    let image: string | undefined = undefined;
-    const attachmentFields = ['Bilder', 'Images', 'Image', 'Attachment', 'Attachments'];
-    for (const k of attachmentFields) {
-      const v = f[k];
-      if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
-        image = v[0].url;
-        break;
-      }
-      if (typeof v === 'string' && v.startsWith('http')) {
-        image = v;
-        break;
-      }
-    }
+    // Image: prefer explicit German attachment field "Produkt-Bild", then try other common names
+let image: string | undefined = undefined;
+const attachmentFields = [
+  'Produkt-Bild', // <-- Airtable column you asked for
+  'Bilder',
+  'Images',
+  'Image',
+  'Attachment',
+  'Attachments'
+];
+
+for (const k of attachmentFields) {
+  const v = f[k];
+  // Common Airtable attachment: an array of objects with a `url` property
+  if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
+    image = v[0].url;
+    break;
+  }
+  // Fallback: sometimes the field can be a plain URL string
+  if (typeof v === 'string' && v.startsWith('http')) {
+    image = v;
+    break;
+  }
+}
 
     // Description & short description
     const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
