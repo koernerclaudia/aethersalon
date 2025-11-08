@@ -7,6 +7,8 @@ interface Event {
   title: string;
   date: string;
   location: string;
+  // keep raw for optional fields like Google Maps Link
+  raw?: any;
 }
 
 interface EventListProps {
@@ -78,7 +80,39 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
                       <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    {event.location}
+                    {/* If the normalized event includes a raw field with a Google Maps link, use it */}
+                    {(() => {
+                      const raw = (event as any).raw || {};
+                      // common Airtable field names for a maps link
+                      const possibleKeys = ['Google Maps Link', 'Google Maps', 'Maps', 'Maps Link', 'Link zu Google Maps', 'Ort Link'];
+                      let mapLink: string | undefined;
+                      for (const k of possibleKeys) {
+                        const v = raw[k];
+                        if (Array.isArray(v) && v.length > 0 && typeof v[0] === 'string') {
+                          mapLink = v[0];
+                          break;
+                        }
+                        if (typeof v === 'string' && v.includes('http')) {
+                          mapLink = v;
+                          break;
+                        }
+                      }
+
+                      if (mapLink) {
+                        return (
+                          <a
+                            href={mapLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-brass"
+                          >
+                            {event.location}
+                          </a>
+                        );
+                      }
+
+                      return event.location;
+                    })()}
                   </span>
                 </div>
               </div>
