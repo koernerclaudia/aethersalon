@@ -96,6 +96,16 @@ const Events: React.FC = () => {
     return d < today;
   });
 
+  // sort ascending (earliest first). Events without parseable dates go to the end.
+  const sortedEvents = filteredEvents.slice().sort((a, b) => {
+    const da = parseEventDate(a);
+    const db = parseEventDate(b);
+    if (!da && !db) return 0;
+    if (!da) return 1;
+    if (!db) return -1;
+    return da.getTime() - db.getTime();
+  });
+
   return (
     <div className="min-h-screen pt-24 px-8 pb-20">
       <div className="mx-auto max-w-5xl">
@@ -155,7 +165,7 @@ const Events: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <EventList events={filteredEvents} showAll={true} />
+          <EventList events={sortedEvents} showAll={true} />
         </motion.div>
 
         {/* Info Section */}
