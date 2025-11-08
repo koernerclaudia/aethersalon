@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import Gears from './components/Gears';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import Events from './pages/Events';
@@ -22,7 +21,7 @@ function App() {
     <ThemeProvider>
      <Router basename={import.meta.env.BASE_URL}>
         <div className="min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text transition-colors duration-300">
-          <Gears />
+          {/* Gears animation removed per request */}
           <Header />
           <main className="relative z-10">
             <Routes>
