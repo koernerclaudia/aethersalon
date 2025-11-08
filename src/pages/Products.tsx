@@ -9,6 +9,11 @@ type Product = {
   category: string;
   image: string;
   description?: string;
+  shortDescription?: string;
+  material?: string;
+  sku?: string;
+  stock?: number;
+  manufacturer?: string;
   price?: number;
 };
 
