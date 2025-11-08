@@ -66,12 +66,27 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
               "min-[500px]:min-w-[85%] md:min-w-0 snap-start"
             }
           >
-            <div className="aspect-square overflow-hidden">
+            <div className="relative aspect-square overflow-hidden">
               <img
                 src={product.image}
                 alt={product.name}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
               />
+
+              {/* faint overlay button shown on hover, centered on image */}
+              <Link
+                to={`/products/${product.id}`}
+                className={
+                  'absolute inset-0 flex items-center justify-center transition-opacity duration-200 ' +
+                  'opacity-0 group-hover:opacity-100'
+                }
+                aria-hidden={false}
+                aria-label={`Öffne Details zu ${product.name}`}
+              >
+                <span className="inline-flex items-center justify-center px-3 py-2 bg-black/25 backdrop-blur-sm rounded-full text-sm text-white/90 border border-white/10 hover:bg-black/30">
+                  Details
+                </span>
+              </Link>
             </div>
             <div className="p-6 bg-dark-bg/90 dark:bg-dark-bg/90">
               <div className="flex items-start justify-between">
@@ -107,15 +122,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                   <div>Bestand: <span className="font-medium">{product.stock}</span></div>
                 )}
               </div>
-              <div className="mt-4">
-                <Link
-                  to={`/products/${product.id}`}
-                  className="inline-block px-4 py-2 bg-brass text-dark-bg font-medium rounded hover:bg-brass/90 transition-colors"
-                  aria-label={`Details zu ${product.name}`}
-                >
-                  Details ansehen
-                </Link>
-              </div>
+              {/* details action moved to image overlay (hover) */}
             </div>
           </motion.div>
         ))}

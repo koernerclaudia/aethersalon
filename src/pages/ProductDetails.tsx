@@ -21,6 +21,7 @@ const ProductDetails: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   useEffect(() => {
     let mounted = true;
@@ -49,20 +50,52 @@ const ProductDetails: React.FC = () => {
     };
   }, [id]);
 
+  // keep the selected image in sync when product loads/changes
+  useEffect(() => {
+    if (product) {
+      setSelectedImage(product.image || '');
+    }
+  }, [product]);
+
   if (loading) return <div className="min-h-screen pt-24 px-4"><div className="container mx-auto">Lade Produkt…</div></div>;
   if (error) return <div className="min-h-screen pt-24 px-4"><div className="container mx-auto text-red-500">{error}</div></div>;
   if (!product) return <div className="min-h-screen pt-24 px-4"><div className="container mx-auto">Produkt nicht gefunden.</div></div>;
 
   return (
-    <div className="min-h-screen pt-24 px-4">
-      <div className="container mx-auto">
+    <div className="min-h-screen pt-24 px-8 pb-20">
+      <div className="mx-auto max-w-5xl">
         <div className="mb-6">
           <Link to="/products" className="text-sm text-brass hover:underline">← Zurück zu Produkten</Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          <div className="rounded-lg overflow-hidden border border-brass/30">
-            <img src={product.image} alt={product.name} className="w-full h-auto object-cover" />
+          <div>
+            <div className="rounded-lg overflow-hidden border border-brass/30 flex items-center justify-center bg-dark-bg/5 p-2">
+              <img src={selectedImage || product.image} alt={product.name} className="w-full h-auto max-h-[420px] object-contain" />
+            </div>
+
+            {/* thumbnail gallery with placeholders for up to 3 additional images */}
+            <div className="mt-4 grid grid-cols-3 gap-3">
+              {(() => {
+                // derive gallery images from raw attachments if present, else use the main image as placeholder
+                const attachments: any[] = (product as any)?.raw?.fields?.['Produkt-Bild'] || [];
+                const gallery = attachments.length > 0
+                  ? attachments.map((a) => a.url || a.thumbnails?.large?.url || '')
+                  : [product.image, product.image, product.image];
+
+                return gallery.slice(0, 3).map((src, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImage(src)}
+                    className="rounded overflow-hidden border border-brass/20 focus:outline-none focus:ring-2 focus:ring-brass"
+                    aria-label={`Zeige Bild ${idx + 1}`}
+                    type="button"
+                  >
+                    <img src={src} alt={`${product.name} ${idx + 1}`} className="w-full h-20 object-cover" />
+                  </button>
+                ));
+              })()}
+            </div>
           </div>
 
           <div>
