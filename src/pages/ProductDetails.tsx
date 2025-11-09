@@ -32,11 +32,14 @@ const ProductDetails: React.FC = () => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const payload = await res.json();
         const products: Product[] = payload?.products || [];
-        const found = products.find((p) => String(p.id) === String(id));
+        // Prefer numeric id match first (legacy), then Airtable rawId if present.
+        const found = products.find((p: any) =>
+          String(p.id) === String(id) || String((p as any).rawId || '') === String(id)
+        );
         if (mounted) setProduct(found || null);
       } catch (err: any) {
         // fallback to sample data
-        const found = sampleProducts.find((p) => String(p.id) === String(id));
+  const found = sampleProducts.find((p) => String(p.id) === String(id));
         if (found) setProduct(found as Product);
         else setError('Produkt konnte nicht geladen werden.');
       } finally {
@@ -70,7 +73,7 @@ const ProductDetails: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
           <div>
-            <div className="rounded-lg overflow-hidden border border-brass/30 flex items-center justify-center bg-dark-bg/5 p-2">
+            <div className="rounded-lg overflow-hidden border border-brass/30 flex items-center justify-center bg-theme-30 p-2">
               <img src={selectedImage || product.image} alt={product.name} className="w-full h-auto max-h-[420px] object-contain" />
             </div>
 
@@ -106,24 +109,24 @@ const ProductDetails: React.FC = () => {
           </div>
 
           <div>
-            <h1 className="text-4xl font-heading font-bold text-dark-text mb-4">{product.name}</h1>
+            <h1 className="text-4xl font-heading font-bold text-theme mb-4">{product.name}</h1>
             <div className="text-sm text-brass mb-4">{product.category}</div>
             {product.price !== undefined && (
               <div className="text-2xl font-semibold mb-4">{typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}</div>
             )}
 
-            {product.shortDescription && <p className="mb-4 text-dark-text/80">{product.shortDescription}</p>}
+            {product.shortDescription && <p className="mb-4 text-theme-80">{product.shortDescription}</p>}
 
             {product.description && (
               <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Beschreibung</h2>
-                <p className="text-dark-text/80">{product.description}</p>
+                <p className="text-theme-80">{product.description}</p>
               </div>
             )}
 
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-2">Details</h3>
-              <ul className="text-sm text-dark-text/80 space-y-1">
+              <ul className="text-sm text-theme-80 space-y-1">
                 {product.material && <li><strong>Material:</strong> {product.material}</li>}
                 {product.sku && <li><strong>Artikelnummer:</strong> {product.sku}</li>}
                 {product.manufacturer && <li><strong>Hersteller:</strong> {product.manufacturer}</li>}
@@ -132,7 +135,7 @@ const ProductDetails: React.FC = () => {
             </div>
 
             <div>
-              <a href={`mailto:info@aethersalon1889.de?subject=Anfrage zu ${encodeURIComponent(product.name)}`} className="inline-block px-6 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90">Anfrage senden</a>
+              <a href={`mailto:info@aethersalon1889.de?subject=Anfrage zu ${encodeURIComponent(product.name)}`} className="inline-block px-6 py-3 bg-brass text-dark-bg font-semibold rounded-full hover:bg-brass/90">Anfrage senden</a>
             </div>
           </div>
         </div>

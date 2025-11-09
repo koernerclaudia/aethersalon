@@ -24,40 +24,69 @@ function normalize(records: AirtableRecord[]) {
     const name =
       f.Titel || f.TITLE || f.Title || f.Name || f.name || `Produkt ${idx + 1}`;
 
-    // Category: prefer the explicit field "Art des Produkts", else use Produktgruppe (array of linked record ids)
+    // Category: prefer the explicit field "Art des Produkts" (can be multiple-select),
+    // else use Produktgruppe (array of linked record ids).
+    // We'll expose both a primary category (first value) and a tags array for multi-select values.
     let category = '';
-    if (f['Art des Produkts']) category = String(f['Art des Produkts']);
-    else if (Array.isArray(f.Produktgruppe) && f.Produktgruppe.length > 0)
+    let tags: string[] = [];
+    const rawArt = f['Art des Produkts'];
+
+    if (Array.isArray(rawArt) && rawArt.length > 0) {
+      // Each item might itself contain commas; split each element, trim and dedupe
+      const split = rawArt
+        .map((v: any) => String(v))
+        .flatMap((s) => s.split(','))
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      // dedupe while preserving order
+      tags = Array.from(new Set(split));
+      category = tags[0] || '';
+    } else if (typeof rawArt === 'string' && rawArt.trim()) {
+      // Sometimes Airtable values may be returned as a comma-separated string
+      tags = rawArt.split(',').map((s: string) => s.trim()).filter(Boolean);
+      tags = Array.from(new Set(tags));
+      category = tags[0] || '';
+    } else if (Array.isArray(f.Produktgruppe) && f.Produktgruppe.length > 0) {
       category = String(f.Produktgruppe[0]);
-    else category = 'Unkategorisiert';
+    } else {
+      category = 'Unkategorisiert';
+    }
 
     // Image: prefer explicit German attachment field "Produkt-Bild", then try other common names
-let image: string | undefined = undefined;
-const attachmentFields = [
-  'Produkt-Bild', // <-- Airtable column you asked for
-  'Bilder',
-  'Images',
-  'Image',
-  'Attachment',
-  'Attachments'
-];
+    let image: string | undefined = undefined;
+    const attachmentFields = [
+      'Produkt-Bild', // <-- Airtable column you asked for
+      'Bilder',
+      'Images',
+      'Image',
+      'Attachment',
+      'Attachments',
+    ];
 
-for (const k of attachmentFields) {
-  const v = f[k];
-  // Common Airtable attachment: an array of objects with a `url` property
-  if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
-    image = v[0].url;
-    break;
-  }
-  // Fallback: sometimes the field can be a plain URL string
-  if (typeof v === 'string' && v.startsWith('http')) {
-    image = v;
-    break;
-  }
-}
+    for (const k of attachmentFields) {
+      const v = f[k];
+
+      // Common Airtable attachment: an array of objects with a `url` property
+      if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
+        image = v[0].url;
+        break;
+      }
+
+      // Fallback: sometimes the field can be a plain URL string
+      if (typeof v === 'string' && v.startsWith('http')) {
+        image = v;
+        break;
+      }
+    }
 
     // Description & short description
-    const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
+    const description =
+      f.Beschreibung ||
+      f.Beschreibung ||
+      f.Kurzbeschreibung ||
+      f.Kurzbeschreibung ||
+      '';
     const shortDescription = f.Kurzbeschreibung || f.Kurzbeschreibung || '';
 
     // Material / condition (Beschaffenheit)
@@ -67,13 +96,19 @@ for (const k of attachmentFields) {
     const sku = f.Artikelnummer || f['Artikelnummer'] || '';
 
     // Stock / Bestand
-    const stock = typeof f.Bestand === 'number' ? f.Bestand : parseInt(String(f.Bestand || ''), 10) || 0;
+    const stock =
+      typeof f.Bestand === 'number'
+        ? f.Bestand
+        : parseInt(String(f.Bestand || ''), 10) || 0;
 
     // Manufacturer / Hergestellt von / Herstellername (may be array of names or linked record ids)
     let manufacturer: string | undefined = undefined;
     if (Array.isArray(f['Herstellername']) && f['Herstellername'].length > 0) {
       manufacturer = String(f['Herstellername'][0]);
-    } else if (Array.isArray(f['Hergestellt von']) && f['Hergestellt von'].length > 0) {
+    } else if (
+      Array.isArray(f['Hergestellt von']) &&
+      f['Hergestellt von'].length > 0
+    ) {
       manufacturer = String(f['Hergestellt von'][0]);
     } else if (typeof f['Herstellername'] === 'string') {
       manufacturer = f['Herstellername'];
@@ -82,13 +117,15 @@ for (const k of attachmentFields) {
     // Price parsing (Einzelpreis)
     let price: number | undefined = undefined;
     if (typeof f.Einzelpreis === 'number') price = f.Einzelpreis;
-    else if (typeof f.Einzelpreis === 'string') price = parseFloat(f.Einzelpreis.replace(',', '.')) || undefined;
+    else if (typeof f.Einzelpreis === 'string')
+      price = parseFloat(f.Einzelpreis.replace(',', '.')) || undefined;
 
     return {
       // keep a stable numeric id for the UI (ProductGrid expects numbers in this codebase)
       id: idx + 1,
       name,
       category,
+      tags,
       image: image || placeholderImage,
       description,
       shortDescription,
@@ -110,7 +147,12 @@ export default async function handler(req: any, res: any) {
   }
 
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || !AIRTABLE_PRODUCTS_TABLE) {
-    return res.status(500).json({ error: 'Airtable environment variables not configured on this deployment.' });
+    return res
+      .status(500)
+      .json({
+        error:
+          'Airtable environment variables not configured on this deployment.',
+      });
   }
 
   try {
@@ -127,7 +169,9 @@ export default async function handler(req: any, res: any) {
 
     if (!r.ok) {
       const text = await r.text();
-      return res.status(r.status).json({ error: 'Airtable error', details: text });
+      return res
+        .status(r.status)
+        .json({ error: 'Airtable error', details: text });
     }
 
     const payload = await r.json();
@@ -139,6 +183,9 @@ export default async function handler(req: any, res: any) {
     return res.status(200).json({ products });
   } catch (err: any) {
     console.error('Airtable proxy error:', err?.message || err);
-    return res.status(500).json({ error: 'Internal server error', details: err?.message || String(err) });
+    return res.status(500).json({
+      error: 'Internal server error',
+      details: err?.message || String(err),
+    });
   }
 }

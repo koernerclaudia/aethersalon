@@ -21,3 +21,82 @@
   h1, h2, h3, h4, h5, h6 { @apply font-heading; }
 }
 
+/* Theme CSS variables for simpler theming
+   - ThemeContext toggles `light` or `dark` on the html element
+   - Components can use `.text-theme`, `.bg-theme`, `.text-accent`, `.bg-accent`
+     instead of repeating `text-light-text dark:text-dark-text` everywhere.
+*/
+/* Provide sensible fallbacks for browsers without JS theme toggling */
+:root {
+  --color-bg: #f6e9bd;
+  --color-bg-rgb: 246,233,189;
+  --color-text: #20222A;
+  --color-text-rgb: 32,34,42;
+  --color-accent: #cdab67;
+  --color-accent-rgb: 205,171,103;
+}
+
+html.light {
+  --color-bg: #f6e9bd; /* light background */
+  --color-bg-rgb: 246,233,189;
+  --color-text: #20222A; /* light text */
+  --color-text-rgb: 32,34,42;
+  --color-accent: #cdab67; /* brass */
+  --color-accent-rgb: 205,171,103;
+}
+
+html.dark {
+  --color-bg: #20222A; /* dark background */
+  --color-bg-rgb: 32,34,42;
+  --color-text: #d8d1c3; /* dark text */
+  --color-text-rgb: 216,209,195;
+  --color-accent: #cdab67; /* brass */
+  --color-accent-rgb: 205,171,103;
+}
+
+/* Theme helper utilities (use these in components to inherit theme values).
+   Added `-rgb` variables and a few opacity helper classes so we can replace
+   common Tailwind dual-classes like `text-dark-text/80 dark:text-dark-text/80`.
+*/
+.text-theme { color: rgb(var(--color-text-rgb)); }
+.text-theme-95 { color: rgba(var(--color-text-rgb), .95); }
+.text-theme-90 { color: rgba(var(--color-text-rgb), .9); }
+.text-theme-80 { color: rgba(var(--color-text-rgb), .8); }
+.text-theme-70 { color: rgba(var(--color-text-rgb), .7); }
+.text-theme-50 { color: rgba(var(--color-text-rgb), .5); }
+.text-theme-30 { color: rgba(var(--color-text-rgb), .3); }
+.text-theme-20 { color: rgba(var(--color-text-rgb), .2); }
+
+.bg-theme { background-color: rgb(var(--color-bg-rgb)); }
+.bg-theme-95 { background-color: rgba(var(--color-bg-rgb), .95); }
+.bg-theme-90 { background-color: rgba(var(--color-bg-rgb), .9); }
+.bg-theme-70 { background-color: rgba(var(--color-bg-rgb), .7); }
+.bg-theme-50 { background-color: rgba(var(--color-bg-rgb), .5); }
+.bg-theme-30 { background-color: rgba(var(--color-bg-rgb), .3); }
+
+.text-accent { color: rgb(var(--color-accent-rgb)); }
+.text-accent-90 { color: rgba(var(--color-accent-rgb), .9); }
+.bg-accent { background-color: rgb(var(--color-accent-rgb)); }
+.bg-accent-80 { background-color: rgba(var(--color-accent-rgb), .8); }
+
+/* Keep the original helpers (hex fallback) for consumers expecting var names */
+.text-theme-hex { color: var(--color-text); }
+.bg-theme-hex { background-color: var(--color-bg); }
+
+
+/* Footer-specific layout helpers */
+/*
+  Add vertical spacing between footer list items. We target list items
+  inside `.footer-links` so the spacing can be adjusted independently of
+  Tailwind utility classes. The rule below adds 0.5rem (~8px) between
+  adjacent items (equivalent to Tailwind's `space-y-2`).
+*/
+.footer-links li + li {
+  /* Increased vertical gap between footer links from 0.5rem to 0.75rem
+     to improve readability on desktop. This affects only lists that use
+     the `footer-links` class (used in `src/components/Footer.tsx`). */
+  margin-top: 0.75rem; /* 12px */
+}
+
+
+

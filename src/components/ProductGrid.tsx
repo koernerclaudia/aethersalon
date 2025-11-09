@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 interface Product {
   id: number | string;
   name: string;
   category: string;
+  tags?: string[];
   image: string;
   description?: string;
   shortDescription?: string;
@@ -37,6 +38,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
     },
   };
 
+  const location = useLocation();
+  const activeTag = new URLSearchParams(location.search).get('tag')?.toLowerCase();
+
   return (
     <div>
       <motion.div
@@ -50,10 +54,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
             Layout behavior:
             - default (mobile): column (one card per row)
             - from 500px up: horizontal flex row with snap scrolling showing one card at a time
-            - from md (>=768px): switch to grid with 2 columns
-            - from lg (>=1024px): grid with 4 columns
+            - from md (>=768px): switch to grid with 3 columns
+            - from lg (>=1024px): keep 3 columns for a consistent layout
           */
-          "min-[500px]:flex-row min-[500px]:overflow-x-auto min-[500px]:snap-x min-[500px]:snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4"
+          "min-[500px]:flex-row min-[500px]:overflow-x-auto min-[500px]:snap-x min-[500px]:snap-mandatory md:grid md:grid-cols-3 lg:grid-cols-3"
         }
       >
         {products.map((product) => (
@@ -67,11 +71,29 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
             }
           >
             <div className="relative aspect-square overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
+              {(() => {
+                // defensive image sourcing: prefer top-level product.image but fall back to raw Airtable attachments
+                let imgSrc = (product as any).image;
+                try {
+                  if (!imgSrc) {
+                    const raw = (product as any).raw || (product as any).rawFields || {};
+                    const attachments = raw['Produkt-Bild'] || raw['Bilder'] || raw['Images'] || raw['Image'] || [];
+                    if (Array.isArray(attachments) && attachments.length > 0) {
+                      imgSrc = attachments[0]?.url || attachments[0]?.thumbnails?.large?.url || imgSrc;
+                    }
+                  }
+                } catch (e) {
+                  // ignore and use whatever we have
+                }
+
+                return (
+                  <img
+                    src={imgSrc}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  />
+                );
+              })()}
 
               {/* faint overlay button shown on hover, centered on image */}
               <Link
@@ -88,27 +110,35 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                 </span>
               </Link>
             </div>
-            <div className="p-6 bg-dark-bg/90 dark:bg-dark-bg/90">
+            <div className="p-6 bg-theme-90">
               <div className="flex items-start justify-between">
-                <div>
-                  <span className="text-sm text-brass mb-2 block">{product.category}</span>
-                  <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text">
+                  <div>
+                  {product.tags && product.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                        {product.tags.map((t) => {
+                          const isActive = activeTag && t.toLowerCase() === activeTag;
+                          return (
+                            <Link
+                              key={t}
+                              to={`/products?tag=${encodeURIComponent(t)}`}
+                              className={`inline-flex items-center px-2 py-0.5 text-[0.625rem] rounded-full border transition-colors ${isActive ? 'bg-brass text-dark-bg border-brass' : 'bg-theme-95 text-theme border-brass/20 hover:bg-brass/5'}`}
+                            >
+                              {t}
+                            </Link>
+                          );
+                        })}
+                    </div>
+                  )}
+                  <h3 className="text-xl font-heading font-semibold text-theme">
                     {product.name}
                   </h3>
                   {product.shortDescription && (
-                    <p className="text-sm text-dark-text/80 mt-2">{product.shortDescription}</p>
+                    <p className="text-xs text-theme-80 mt-2">{product.shortDescription}</p>
                   )}
-                </div>
-                <div className="text-right ml-4">
-                    {product.price !== undefined && (
-                      <div className="text-lg font-semibold text-dark-text mb-1">
-                        {typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}
-                      </div>
-                    )}
                 </div>
               </div>
 
-              <div className="mt-4 text-sm text-dark-text/80">
+              <div className="mt-4 text-xs text-theme-80">
                 {product.material && (
                   <div className="mb-1">Material: <span className="font-medium">{product.material}</span></div>
                 )}
@@ -127,7 +157,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
         <div className="text-center mt-12">
           <Link
             to="/products"
-            className="inline-block px-8 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+            className="inline-block px-8 py-3 bg-brass text-dark-bg font-semibold rounded-full hover:bg-brass/90 transition-colors"
           >
             Alle Produkte ansehen
           </Link>

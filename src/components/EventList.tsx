@@ -45,14 +45,14 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
           <motion.div
             key={event.id}
             variants={fadeInUp}
-            className="p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-dark-bg/50 dark:bg-dark-bg/50"
+            className="p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-theme-50"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
-                <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text mb-2">
+                <h3 className="text-xl font-heading font-semibold text-theme mb-2">
                   {event.title}
                 </h3>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-dark-text/80 dark:text-dark-text/80">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-theme-80">
                   <span className="flex items-center">
                     <svg
                       className="w-5 h-5 mr-2 text-brass"
@@ -118,7 +118,7 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
               </div>
               <Link
                 to={`/events/${event.id}`}
-                className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+                className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded-full hover:bg-brass/90 transition-colors"
               >
                 Mehr erfahren
               </Link>
@@ -128,10 +128,10 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
       </motion.div>
 
       {!showAll && (
-        <div className="text-center mt-12">
+          <div className="text-center mt-12">
           <Link
             to="/events"
-            className="inline-block px-8 py-3 border-2 border-brass text-dark-text dark:text-dark-text font-semibold rounded hover:bg-brass/10 transition-colors"
+            className="inline-block px-8 py-3 border-2 border-brass text-theme font-semibold rounded-full hover:bg-brass/10 transition-colors"
           >
             Alle Veranstaltungen
           </Link>

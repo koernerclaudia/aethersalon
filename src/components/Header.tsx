@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import logoUrl from '../assets/Aethersalon.svg';
+import logoUrl from '../assets/logo-wordmark.svg';
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
@@ -35,27 +35,27 @@ const Header: React.FC = () => {
   ];
 
   return (
-    <header
+      <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-dark-bg/95 dark:bg-dark-bg/95 backdrop-blur-sm shadow-lg'
+          ? 'bg-theme-95 backdrop-blur-sm shadow-lg'
           : 'bg-transparent'
       }`}
     >
-      <nav className="container mx-auto px-4 py-4">
+  <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <img
               src={logoUrl}
               alt="Aethersalon Logo"
-              className="h-12 w-auto"
+              className="h-8 w-auto"
             />
           </Link>
 
           {/* Desktop Navigation */}
         
-<div className="hidden lg:flex items-center space-x-8 font-normal">
+  <div className="hidden lg:flex items-center space-x-8 font-normal">
   {navLinks.map((link) => (
     <Link
       key={link.path}
@@ -63,7 +63,7 @@ const Header: React.FC = () => {
       className={`text-sm transition-colors relative group ${
         location.pathname === link.path
           ? 'text-brass'
-          : 'text-dark-text dark:text-dark-text hover:text-brass'
+          : 'text-theme hover:text-brass'
       }`}
     >
       {link.name}
@@ -115,7 +115,7 @@ const Header: React.FC = () => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2 text-dark-text dark:text-dark-text"
+              className="lg:hidden p-2 text-theme"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -162,9 +162,9 @@ const Header: React.FC = () => {
                     key={link.path}
                     to={link.path}
                     className={`text-sm font-heading transition-colors ${
-                      location.pathname === link.path
-                        ? 'text-brass'
-                        : 'text-dark-text dark:text-dark-text hover:text-brass'
+          location.pathname === link.path
+            ? 'text-brass'
+            : 'text-theme hover:text-brass'
                     }`}
                   >
                     {link.name}
