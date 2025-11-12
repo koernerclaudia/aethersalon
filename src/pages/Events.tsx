@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import EventList from '../components/EventList';
-import { sampleEvents } from '../data/sampleData';
+import { sampleEvents, samplePastEvents } from '../data/sampleData';
+import { Link } from 'react-router-dom';
 
 type EventItem = {
   id: number;
   title: string;
   date: string;
   location: string;
+  description?: string;
+  longText?: string;
+  photos?: string[];
   raw?: any;
 };
 
@@ -158,14 +162,53 @@ const Events: React.FC = () => {
           </button>
         </div>
 
-        {/* Events List */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={fadeInUp}
-          transition={{ delay: 0.2 }}
-        >
-          <EventList events={sortedEvents} showAll={true} />
+        {/* Upcoming Events (compact, no photos) */}
+        <motion.div initial="hidden" animate="visible" variants={fadeInUp} transition={{ delay: 0.2 }} className="mb-12">
+          <h2 className="text-2xl font-heading font-semibold text-dark-text mb-4">Kommende Veranstaltungen</h2>
+          <EventList events={sortedEvents.filter((e) => {
+            const d = parseEventDate(e);
+            if (!d) return true;
+            d.setHours(0,0,0,0);
+            return d >= today;
+          })} showAll={false} />
+        </motion.div>
+
+        {/* Past Events with photos & longreads (blog-like) */}
+        <motion.div initial="hidden" animate="visible" variants={fadeInUp} transition={{ delay: 0.3 }}>
+          <h2 className="text-2xl font-heading font-semibold text-dark-text mb-6">Vergangene Veranstaltungen</h2>
+          <div className="space-y-8">
+            {(sortedEvents.filter((e) => {
+              const d = parseEventDate(e);
+              if (!d) return false;
+              d.setHours(0,0,0,0);
+              return d < today;
+            }).length > 0 ? sortedEvents.filter((e) => {
+              const d = parseEventDate(e);
+              if (!d) return false;
+              d.setHours(0,0,0,0);
+              return d < today;
+            }) : samplePastEvents).map((ev, i) => (
+              <section key={ev.id} className={`flex flex-col md:flex-row items-center gap-6 border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 p-4 md:p-6 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                <div className="w-full md:w-1/3 h-[320px] bg-dark-bg/10 flex items-center justify-center">
+                  {Array.isArray((ev as any).photos) && (ev as any).photos.length > 0 ? (
+                    <img src={(ev as any).photos[0]} alt={ev.title} className="w-full h-[320px] object-cover" />
+                  ) : (
+                    <div className="w-[280px] h-[280px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
+                      <span className="text-theme text-sm">Bild fehlt</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="w-full md:w-2/3 flex flex-col">
+                  <h3 className="text-2xl font-heading font-semibold text-dark-text mb-3">{ev.title}</h3>
+                  <p className="text-dark-text/80 mb-4">{(ev as any).longText || ev.description}</p>
+                  <div>
+                    <Link to={`/events/${ev.id}`} className="btn btn-sm bg-brass text-dark-bg">Mehr lesen</Link>
+                  </div>
+                </div>
+              </section>
+            ))}
+          </div>
         </motion.div>
 
         {/* Info Section */}

@@ -48,9 +48,15 @@ const Partners: React.FC = () => {
           <p className="text-lg text-dark-text/80">Wir arbeiten mit ausgewählten Werkstätten und Verlagen zusammen.</p>
         </motion.div>
 
-        <div className="space-y-8">
-          {partners.map((p) => (
-            <motion.section key={p.id} initial="hidden" whileInView="visible" variants={fadeInUp} className="flex flex-col md:flex-row items-center gap-6 border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 p-4 md:p-6">
+        <div className="space-y-8 pb-16">
+          {partners.map((p, i) => (
+            <motion.section
+              key={p.id}
+              initial="hidden"
+              whileInView="visible"
+              variants={fadeInUp}
+              className={`flex flex-col md:flex-row items-center gap-6 border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 p-4 md:p-6 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+            >
               <div className="w-full md:w-1/3 h-[350px] bg-dark-bg/10 flex items-center justify-center">
                 {p.imageUrl ? (
                   <img src={p.imageUrl} alt={p.name} className="w-full h-[350px] object-cover" />
