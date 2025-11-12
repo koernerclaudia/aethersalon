@@ -8,9 +8,10 @@ import Products from './pages/Products';
 import Partners from './pages/Partners';
 import Events from './pages/Events';
 import ProductDetails from './pages/ProductDetails';
+import EventDetails from './pages/EventDetailsPage';
+import About from './pages/About';
 
 // Placeholder pages - to be implemented
-const About: React.FC = () => <div className="min-h-screen pt-24 px-4"><div className="container mx-auto"><h1 className="text-4xl font-heading text-dark-text dark:text-dark-text">Über Mich</h1><p className="mt-4 text-dark-text dark:text-dark-text">Coming soon...</p></div></div>;
 const History: React.FC = () => <div className="min-h-screen pt-24 px-4"><div className="container mx-auto"><h1 className="text-4xl font-heading text-dark-text dark:text-dark-text">History</h1><p className="mt-4 text-dark-text dark:text-dark-text">Coming soon...</p></div></div>;
 const Workshop: React.FC = () => <div className="min-h-screen pt-24 px-4"><div className="container mx-auto"><h1 className="text-4xl font-heading text-dark-text dark:text-dark-text">Werkstatt</h1><p className="mt-4 text-dark-text dark:text-dark-text">Coming soon...</p></div></div>;
 const Contact: React.FC = () => <div className="min-h-screen pt-24 px-4"><div className="container mx-auto"><h1 className="text-4xl font-heading text-dark-text dark:text-dark-text">Kontakt</h1><p className="mt-4 text-dark-text dark:text-dark-text">Coming soon...</p></div></div>;
@@ -29,6 +30,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/events/:id" element={<EventDetails />} />
               <Route path="/products" element={<Products />} />
               <Route path="/partners" element={<Partners />} />
               <Route path="/products/:id" element={<ProductDetails />} />

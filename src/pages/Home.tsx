@@ -7,7 +7,9 @@ import Button from '../components/Button';
 import { sampleEvents } from '../data/sampleData';
 import { samplePartners } from '../data/partners';
 import logoUrl from '../assets/Aethersalon.svg';
+import logoWordmark from '../assets/logo-wordmark.svg';
 import bgUrl from '../assets/steampunkroom.jpg';
+import ImageCarousel from '../components/ImageCarousel';
 
 
 const Home: React.FC = () => {
@@ -229,6 +231,10 @@ const Home: React.FC = () => {
             </p>
           </motion.div>
 
+          <div className="mb-8">
+            <ImageCarousel images={[bgUrl, logoUrl, logoWordmark]} heightClass="h-[300px] md:h-[350px]" />
+          </div>
+
           <EventList events={upcomingEvents} showAll={false} />
         </div>
       </section>
@@ -260,9 +266,9 @@ const Home: React.FC = () => {
           >
             {partners.slice(0, 4).map((p) => (
               <motion.div key={p.id} variants={fadeInUp} className="border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50">
-                <div className="w-full h-[350px] bg-dark-bg/10 flex items-center justify-center">
+                <div className="w-full h-[250px] bg-dark-bg/10 flex items-center justify-center">
                   {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="w-full h-[350px] object-cover" />
+                    <img src={p.imageUrl} alt={p.name} className="w-full h-[250px] object-cover" />
                   ) : (
                     <div className="text-center px-4">
                       <div className="w-[250px] h-[250px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
@@ -274,7 +280,6 @@ const Home: React.FC = () => {
 
                 <div className="p-4 md:p-6 flex flex-col h-full">
                   <h3 className="text-xl font-heading font-semibold text-dark-text mb-2">{p.name}</h3>
-                  <p className="text-dark-text/80 text-sm mb-4 flex-1">{p.description}</p>
                   <div className="mt-2">
                       {p.website && (
                       <Button href={p.website} size="sm" target="_blank" rel="noopener noreferrer" className="bg-brass text-dark-bg hover:bg-brass/90">

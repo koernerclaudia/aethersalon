@@ -93,3 +93,32 @@ export const sampleEvents = [
     category: 'Workshop',
   },
 ];
+
+// Sample past events with photos and longer writeups (used for the Past Events / blog section)
+export const samplePastEvents = [
+  {
+    id: 101,
+    title: 'Aethersalon Retrospektive 2024',
+    date: '12. November 2024',
+    location: 'Hamburg',
+    description: 'Rückblick auf unsere Ausstellungen und besonderen Momente 2024. Mit Workshops, Live-Demos und Ausstellern.',
+    longText: `Im November 2024 präsentierten wir eine Auswahl an Arbeiten, die den Geist des Aethersalon 1889 einfangen: handgefertigte Uhren, mechanische Skulpturen und kuratierte Sammlungen. Besucher konnten an Workshops teilnehmen und hinter die Kulissen unserer Werkstatt blicken.`,
+    photos: [
+      'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&q=60&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1509228627159-645c3a0b0b30?w=1200&q=60&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&q=60&auto=format&fit=crop',
+    ],
+  },
+  {
+    id: 102,
+    title: 'Steampunk Salon: Werkstattabend',
+    date: '03. September 2023',
+    location: 'Berlin',
+    description: 'Ein Abend in der Werkstatt mit Demonstrationen und kleinen Vorführungen.',
+    longText: `Unser Werkstattabend in Berlin bot eine intime Atmosphäre, in der wir Prototypen, Restaurationsprojekte und interaktive Demonstrationen zeigten. Viele Besucher nutzten die Gelegenheit, Fragen zu stellen und eigene Ideen vorzustellen.`,
+    photos: [
+      'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=1200&q=60&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=60&auto=format&fit=crop',
+    ],
+  },
+];
