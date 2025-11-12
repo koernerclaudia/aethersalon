@@ -1,0 +1,83 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { samplePartners } from '../data/partners';
+import Button from '../components/Button';
+
+const Partners: React.FC = () => {
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+  const [partners, setPartners] = React.useState(samplePartners);
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch('/api/partners');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (mounted && Array.isArray(payload?.partners)) {
+          setPartners(payload.partners);
+        }
+      } catch (err) {
+        console.warn('Failed to load partners from API, falling back to sample data', err);
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen pt-24 px-4">
+      <div className="mx-auto max-w-5xl">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInUp}
+          className="text-center mb-12"
+        >
+          <h1 style={{ fontFamily: "'EFCO Brookshire', serif", fontWeight: 400 }} className="text-4xl md:text-5xl text-dark-text mb-4">
+            Unsere Partner
+          </h1>
+          <p className="text-lg text-dark-text/80">Wir arbeiten mit ausgewählten Werkstätten und Verlagen zusammen.</p>
+        </motion.div>
+
+        <div className="space-y-8">
+          {partners.map((p) => (
+            <motion.section key={p.id} initial="hidden" whileInView="visible" variants={fadeInUp} className="flex flex-col md:flex-row items-center gap-6 border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 p-4 md:p-6">
+              <div className="w-full md:w-1/3 h-[350px] bg-dark-bg/10 flex items-center justify-center">
+                {p.imageUrl ? (
+                  <img src={p.imageUrl} alt={p.name} className="w-full h-[350px] object-cover" />
+                ) : (
+                  <div className="w-[320px] h-[320px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
+                    <span className="text-theme text-sm">Bild fehlt</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="w-full md:w-2/3 flex flex-col">
+                <h3 className="text-2xl font-heading font-semibold text-dark-text mb-3">{p.name}</h3>
+                <p className="text-dark-text/80 mb-4">{p.description}</p>
+                <div>
+                  {p.website && (
+                    <Button href={p.website} size="sm" target="_blank" rel="noopener noreferrer" className="bg-brass text-dark-bg hover:bg-brass/90">
+                      Zur Website
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </motion.section>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Partners;

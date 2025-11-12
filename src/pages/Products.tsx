@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import { sampleProducts } from '../data/sampleData';
+import Button from '../components/Button';
 
 type Product = {
   id: number;
@@ -110,12 +111,12 @@ const Products: React.FC = () => {
               Kontaktieren Sie uns für weitere Informationen, Preise und Verfügbarkeit.
               Wir fertigen auch individuelle Aufträge nach Ihren Wünschen.
             </p>
-            <a
+            <Button
               href="mailto:info@aethersalon1889.de?subject=Produktanfrage"
-              className="inline-block px-8 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+              className="bg-brass text-dark-bg hover:bg-brass/90"
             >
               Anfrage senden
-            </a>
+            </Button>
           </div>
         </motion.div>
       </div>
