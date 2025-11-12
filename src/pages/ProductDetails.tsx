@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { sampleProducts } from '../data/sampleData';
+import Button from '../components/Button';
 
 type Product = {
   id: number | string;
@@ -132,7 +133,20 @@ const ProductDetails: React.FC = () => {
             </div>
 
             <div>
-              <a href={`mailto:info@aethersalon1889.de?subject=Anfrage zu ${encodeURIComponent(product.name)}`} className="inline-block px-6 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90">Anfrage senden</a>
+              {(() => {
+                const subjectRaw = `Anfrage zu ${product.name}${product.sku ? ` (Artikelnummer: ${product.sku})` : ''}`;
+                const subject = encodeURIComponent(subjectRaw);
+                return (
+                  <Button
+                    href={`mailto:info@aethersalon1889.de?subject=${subject}`}
+                    className="bg-brass text-dark-bg hover:bg-brass/90"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Anfrage senden
+                  </Button>
+                );
+              })()}
             </div>
           </div>
         </div>

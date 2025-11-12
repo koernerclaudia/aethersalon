@@ -137,22 +137,22 @@ const Events: React.FC = () => {
         )}
 
         {/* Filter controls */}
-        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="flex items-center justify-center gap-3 mb-6">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded ${filter === 'all' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+            className={`btn-sm ${filter === 'all' ? 'bg-brass text-dark-bg' : 'border border-brass/20 text-dark-text'}`}
           >
             Alle
           </button>
           <button
             onClick={() => setFilter('upcoming')}
-            className={`px-4 py-2 rounded ${filter === 'upcoming' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+            className={`btn-sm ${filter === 'upcoming' ? 'bg-brass text-dark-bg' : 'border border-brass/20 text-dark-text'}`}
           >
             Kommende
           </button>
           <button
             onClick={() => setFilter('past')}
-            className={`px-4 py-2 rounded ${filter === 'past' ? 'bg-brass text-dark-bg font-semibold' : 'border border-brass/20'}`}
+            className={`btn-sm ${filter === 'past' ? 'bg-brass text-dark-bg' : 'border border-brass/20 text-dark-text'}`}
           >
             Vergangene
           </button>
@@ -186,7 +186,7 @@ const Events: React.FC = () => {
             </p>
             <a
               href="mailto:info@aethersalon1889.de?subject=Event-Anfrage"
-              className="inline-block px-8 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+              className="btn bg-brass text-dark-bg hover:bg-brass/90"
             >
               Kontakt aufnehmen
             </a>

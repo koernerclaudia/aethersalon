@@ -1,12 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Button from './Button';
 
 interface Product {
   id: number | string;
   name: string;
-  category: string;
-  image: string;
+  category?: string;
+  tags?: string[];
+  image?: string;
   description?: string;
   shortDescription?: string;
   material?: string;
@@ -14,6 +16,8 @@ interface Product {
   stock?: number;
   manufacturer?: string;
   price?: number;
+  // raw fields from Airtable when available
+  raw?: Record<string, any>;
 }
 
 interface ProductGridProps {
@@ -37,6 +41,27 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
     },
   };
 
+  const location = useLocation();
+  const activeTag = new URLSearchParams(location.search).get('tag')?.toLowerCase();
+
+  // helper to extract tags from product: prefer product.tags, else try raw 'Art des Produkts'
+  function extractTags(p: Product): string[] {
+    if (Array.isArray(p.tags) && p.tags.length > 0) return p.tags;
+    const raw = (p as any).raw || {};
+    const field = raw['Art des Produkts'] || raw['Art des Produkts '];
+    if (!field) return [];
+    // field can be an array or a string with multiple items
+    if (Array.isArray(field)) return field.map((s) => String(s).trim()).filter(Boolean);
+    if (typeof field === 'string') {
+      // split on commas, semicolons, slashes or newlines
+      return field
+        .split(/[;,\/\n]+/) 
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+    return [];
+  }
+
   return (
     <div>
       <motion.div
@@ -53,7 +78,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
             - from md (>=768px): switch to grid with 2 columns
             - from lg (>=1024px): grid with 4 columns
           */
-          "min-[500px]:flex-row min-[500px]:overflow-x-auto min-[500px]:snap-x min-[500px]:snap-mandatory md:grid md:grid-cols-2 lg:grid-cols-4"
+          "min-[500px]:flex-row min-[500px]:overflow-x-auto min-[500px]:snap-x min-[500px]:snap-mandatory md:grid md:grid-cols-3 lg:grid-cols-3"
         }
       >
         {products.map((product) => (
@@ -91,20 +116,33 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
             <div className="p-6 bg-dark-bg/90 dark:bg-dark-bg/90">
               <div className="flex items-start justify-between">
                 <div>
-                  <span className="text-sm text-brass mb-2 block">{product.category}</span>
+                  {/* Tag pills showing "Art des Produkts" (split into individual tags when multiple) */}
+                  {(() => {
+                    const tags = extractTags(product);
+                    if (!tags || tags.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-2 mt-2 mb-2">
+                        {tags.map((t) => {
+                          const isActive = activeTag && t.toLowerCase() === activeTag;
+                          return (
+                            <Link
+                              key={t}
+                              to={`/products?tag=${encodeURIComponent(t)}`}
+                              className={`inline-flex items-center px-2 py-0.5 text-[0.625rem] rounded-full border transition-colors ${isActive ? 'bg-brass text-dark-bg border-brass' : 'bg-transparent text-white border-brass hover:bg-brass/5'}`}
+                            >
+                              {t}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
                   <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text">
                     {product.name}
                   </h3>
                   {product.shortDescription && (
                     <p className="text-sm text-dark-text/80 mt-2">{product.shortDescription}</p>
                   )}
-                </div>
-                <div className="text-right ml-4">
-                    {product.price !== undefined && (
-                      <div className="text-lg font-semibold text-dark-text mb-1">
-                        {typeof product.price === 'number' && product.price > 0 ? `${product.price.toFixed(2)} €` : '—'}
-                      </div>
-                    )}
                 </div>
               </div>
 
@@ -125,12 +163,9 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
 
       {!showAll && (
         <div className="text-center mt-12">
-          <Link
-            to="/products"
-            className="inline-block px-8 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
-          >
+          <Button to="/products" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors">
             Alle Produkte ansehen
-          </Link>
+          </Button>
         </div>
       )}
     </div>

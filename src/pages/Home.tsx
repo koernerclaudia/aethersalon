@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import ProductGrid from '../components/ProductGrid';
 import EventList from '../components/EventList';
-import { sampleProducts, sampleEvents } from '../data/sampleData';
+import Button from '../components/Button';
+import { sampleEvents } from '../data/sampleData';
+import { samplePartners } from '../data/partners';
 import logoUrl from '../assets/Aethersalon.svg';
 import bgUrl from '../assets/steampunkroom.jpg';
 
@@ -25,18 +27,58 @@ const Home: React.FC = () => {
     },
   };
 
-  // Get first 3 products and events for homepage
-  const featuredProducts = sampleProducts.slice(0, 3);
+  // Featured products: fetch up to 6 products from the API (no sample fallback)
+  const [featuredProducts, setFeaturedProducts] = React.useState<any[]>([]);
+
+  const [partners, setPartners] = React.useState(samplePartners);
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch('/api/partners');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (mounted && Array.isArray(payload?.partners)) {
+          setPartners(payload.partners);
+        }
+      } catch (err) {
+        console.warn('Failed to load partners for homepage, using sample partners', err);
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (mounted && Array.isArray(payload?.products)) {
+          setFeaturedProducts(payload.products.slice(0, 6));
+        }
+      } catch (err) {
+        console.warn('Failed to load products for homepage', err);
+        if (mounted) setFeaturedProducts([]);
+      } finally {
+        /* intentionally no loading state stored; homepage will update when products arrive */
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
   const upcomingEvents = sampleEvents.slice(0, 3);
 
-  const partners = [
-    'Partner 1',
-    'Partner 2',
-    'Partner 3',
-    'Partner 4',
-    'Partner 5',
-    'Partner 6',
-  ];
+  // partners now sourced from shared samplePartners data
 
   return (
     <div className="min-h-screen">
@@ -85,18 +127,12 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link
-              to="/products"
-              className="px-8 py-3 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors glow"
-            >
+            <Button to="/products" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors glow">
               Produkte entdecken
-            </Link>
-            <Link
-              to="/events"
-              className="px-8 py-3 border-2 border-brass text-dark-text dark:text-dark-text font-semibold rounded hover:bg-brass/10 transition-colors"
-            >
+            </Button>
+            <Button to="/events" className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors">
               Veranstaltungen
-            </Link>
+            </Button>
           </motion.div>
         </div>
       </section>
@@ -148,7 +184,7 @@ const Home: React.FC = () => {
 
       {/* Featured Products */}
       <section className="py-20 px-4">
-        <div className="container mx-auto">
+          <div className="mx-auto max-w-5xl px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -177,7 +213,7 @@ const Home: React.FC = () => {
 
       {/* Upcoming Events */}
       <section className="py-20 px-4 bg-gradient-to-b from-brass/5 to-transparent">
-        <div className="container mx-auto">
+        <div className="mx-auto max-w-5xl px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -202,7 +238,7 @@ const Home: React.FC = () => {
 
       {/* Partners */}
       <section className="py-20 px-4">
-        <div className="container mx-auto">
+        <div className="mx-auto max-w-5xl px-4">
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -220,17 +256,33 @@ const Home: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
           >
-            {partners.map((partner, index) => (
-              <motion.div
-                key={index}
-                variants={fadeInUp}
-                className="flex items-center justify-center p-6 border border-brass/30 rounded-lg hover:border-brass transition-colors bg-dark-bg/50 dark:bg-dark-bg/50"
-              >
-                <span className="text-dark-text dark:text-dark-text font-heading text-lg">
-                  {partner}
-                </span>
+            {partners.slice(0, 4).map((p) => (
+              <motion.div key={p.id} variants={fadeInUp} className="border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50">
+                <div className="w-full h-[350px] bg-dark-bg/10 flex items-center justify-center">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="w-full h-[350px] object-cover" />
+                  ) : (
+                    <div className="text-center px-4">
+                      <div className="w-[250px] h-[250px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
+                        <span className="text-theme text-sm">Bild fehlt</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-4 md:p-6 flex flex-col h-full">
+                  <h3 className="text-xl font-heading font-semibold text-dark-text mb-2">{p.name}</h3>
+                  <p className="text-dark-text/80 text-sm mb-4 flex-1">{p.description}</p>
+                  <div className="mt-2">
+                      {p.website && (
+                      <Button href={p.website} size="sm" target="_blank" rel="noopener noreferrer" className="bg-brass text-dark-bg hover:bg-brass/90">
+                        Zur Website
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </motion.div>

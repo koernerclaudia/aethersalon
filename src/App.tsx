@@ -5,6 +5,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
+import Partners from './pages/Partners';
 import Events from './pages/Events';
 import ProductDetails from './pages/ProductDetails';
 
@@ -29,6 +30,7 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/events" element={<Events />} />
               <Route path="/products" element={<Products />} />
+              <Route path="/partners" element={<Partners />} />
               <Route path="/products/:id" element={<ProductDetails />} />
               <Route path="/history" element={<History />} />
               <Route path="/workshop" element={<Workshop />} />

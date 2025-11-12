@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Button from './Button';
 import { motion } from 'framer-motion';
 
 interface Event {
@@ -39,13 +39,13 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
         whileInView="visible"
         viewport={{ once: true }}
         variants={staggerContainer}
-        className="max-w-3xl mx-auto space-y-6"
+        className="space-y-6"
       >
         {events.map((event) => (
           <motion.div
             key={event.id}
             variants={fadeInUp}
-            className="p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-dark-bg/50 dark:bg-dark-bg/50"
+            className="mx-auto max-w-5xl px-4 p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-dark-bg/50 dark:bg-dark-bg/50"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
@@ -116,12 +116,13 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
                   </span>
                 </div>
               </div>
-              <Link
+              <Button
                 to={`/events/${event.id}`}
-                className="mt-4 md:mt-0 inline-block px-4 py-2 bg-brass text-dark-bg font-semibold rounded hover:bg-brass/90 transition-colors"
+                size="sm"
+                className="mt-4 md:mt-0 bg-brass text-dark-bg hover:bg-brass/90 transition-colors"
               >
                 Mehr erfahren
-              </Link>
+              </Button>
             </div>
           </motion.div>
         ))}
@@ -129,12 +130,12 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
 
       {!showAll && (
         <div className="text-center mt-12">
-          <Link
+          <Button
             to="/events"
-            className="inline-block px-8 py-3 border-2 border-brass text-dark-text dark:text-dark-text font-semibold rounded hover:bg-brass/10 transition-colors"
+            className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors"
           >
             Alle Veranstaltungen
-          </Link>
+          </Button>
         </div>
       )}
     </div>
