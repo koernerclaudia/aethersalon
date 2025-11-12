@@ -6,7 +6,7 @@ interface Product {
   id: number | string;
   name: string;
   category: string;
-  image: string;
+  image?: string;
   description?: string;
   shortDescription?: string;
   material?: string;
@@ -67,11 +67,20 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
             }
           >
             <div className="relative aspect-square overflow-hidden">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              />
+              {product.image ? (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              ) : (
+                <div
+                  aria-hidden
+                  className="w-full h-full flex items-center justify-center bg-gradient-to-br from-brass/5 to-transparent text-dark-text/50"
+                >
+                  <span className="text-sm">Kein Bild</span>
+                </div>
+              )}
 
               {/* faint overlay button shown on hover, centered on image */}
               <Link

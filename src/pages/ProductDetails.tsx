@@ -85,10 +85,31 @@ const ProductDetails: React.FC = () => {
                 // Airtable `fields` object. So `product.raw` IS the fields map (not an object with a
                 // `fields` property). Handle both shapes defensively.
                 const rawFields = (product as any)?.raw?.fields || (product as any)?.raw || {};
-                const attachments: any[] = rawFields['Weitere Bilder'] || rawFields['Produkt-Bild'] || [];
-                const gallery = attachments.length > 0
-                  ? attachments.map((a) => a?.url || a?.thumbnails?.large?.url || '')
-                  : [product.image, product.image, product.image];
+
+                const parseAttachments = (val: any): string[] => {
+                  if (!val) return [];
+                  // If it's an array of Airtable attachment objects
+                  if (Array.isArray(val)) {
+                    return val.map((a) => a?.url || a?.thumbnails?.large?.url || a?.thumbnails?.full?.url || '').filter(Boolean);
+                  }
+                  // If it's a string like "Name.png (https://...)", possibly comma-separated
+                  if (typeof val === 'string') {
+                    const urls: string[] = [];
+                    // normalize whitespace/newlines then find all http(s) URLs in the string
+                    const s = val.replace(/\s+/g, ' ');
+                    const re = /https?:\/\/[^)\s,]+/g;
+                    let m: RegExpExecArray | null;
+                    while ((m = re.exec(s)) !== null) {
+                      urls.push(m[0]);
+                    }
+                    return urls;
+                  }
+                  return [];
+                };
+
+                let attachments: string[] = parseAttachments(rawFields['Weitere Bilder']);
+                if (!attachments || attachments.length === 0) attachments = parseAttachments(rawFields['Produkt Bild']);
+                const gallery = attachments.length > 0 ? attachments : [product.image, product.image, product.image];
 
                 return gallery.slice(0, 3).map((src, idx) => (
                   <button

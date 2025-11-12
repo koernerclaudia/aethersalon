@@ -13,9 +13,47 @@ const AIRTABLE_PRODUCTS_TABLE = process.env.AIRTABLE_PRODUCTS_TABLE;
 
 function normalize(records: AirtableRecord[]) {
   // Map the German Airtable schema the user provided to our product shape.
-  // If a field is missing we'll use reasonable fallbacks.
-  const placeholderImage =
-    'https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=400';
+  // If a field is missing we'll keep `image` undefined so the UI can decide
+  // whether to render a decorative empty state instead of a generic photograph.
+
+  // Helper: given a field value (array/object/string) try to extract the first usable URL
+  function extractFirstUrl(value: any): string | undefined {
+    if (!value) return undefined;
+
+    // Attachment array (Airtable): [{ id, url, filename, thumbnails: { large: { url }}}]
+    if (Array.isArray(value) && value.length > 0) {
+      const first = value[0];
+      if (first && typeof first === 'object') {
+        if (first.url && typeof first.url === 'string') return first.url;
+        if (first.thumbnails && first.thumbnails.large && first.thumbnails.large.url)
+          return first.thumbnails.large.url;
+        if (first.thumbnails && first.thumbnails.full && first.thumbnails.full.url)
+          return first.thumbnails.full.url;
+      }
+      // Fallback: if array of strings, check first string for URL
+      if (typeof value[0] === 'string') {
+        const s = String(value[0]);
+        const m = s.match(/https?:\/\/[^\s)]+/i);
+        if (m) return m[0];
+      }
+    }
+
+    // If it's an object with a url property
+    if (typeof value === 'object' && value !== null && value.url && typeof value.url === 'string') {
+      return value.url;
+    }
+
+    // If it's a string, normalize whitespace and try to extract a URL
+    if (typeof value === 'string') {
+      // Remove newlines and excessive whitespace which can break naive regexes
+      const collapsed = value.replace(/\s+/g, ' ').trim();
+      // Match the first http(s) URL, stop at whitespace or a closing paren
+      const m = collapsed.match(/https?:\/\/[^\s)]+/i);
+      if (m) return m[0];
+    }
+
+    return undefined;
+  }
 
   return records.map((r, idx) => {
     const f = r.fields || {};
@@ -31,30 +69,26 @@ function normalize(records: AirtableRecord[]) {
       category = String(f.Produktgruppe[0]);
     else category = 'Unkategorisiert';
 
-    // Image: prefer explicit German attachment field "Produkt-Bild", then try other common names
-let image: string | undefined = undefined;
-const attachmentFields = [
-  'Produkt-Bild', // <-- Airtable column you asked for
-  'Bilder',
-  'Images',
-  'Image',
-  'Attachment',
-  'Attachments'
-];
+    // Image: prefer explicit German attachment field "Produkt Bild", then try other common names
+    let image: string | undefined = undefined;
+    const attachmentFields = [
+      'Produkt Bild', // <-- Airtable column you asked for
+      'Bilder',
+      'Weitere Bilder',
+      'Images',
+      'Image',
+      'Attachment',
+      'Attachments',
+    ];
 
-for (const k of attachmentFields) {
-  const v = f[k];
-  // Common Airtable attachment: an array of objects with a `url` property
-  if (Array.isArray(v) && v.length > 0 && v[0] && v[0].url) {
-    image = v[0].url;
-    break;
-  }
-  // Fallback: sometimes the field can be a plain URL string
-  if (typeof v === 'string' && v.startsWith('http')) {
-    image = v;
-    break;
-  }
-}
+    for (const k of attachmentFields) {
+      const v = f[k];
+      const url = extractFirstUrl(v);
+      if (url) {
+        image = url;
+        break;
+      }
+    }
 
     // Description & short description
     const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
@@ -89,7 +123,7 @@ for (const k of attachmentFields) {
       id: idx + 1,
       name,
       category,
-      image: image || placeholderImage,
+  image: image,
       description,
       shortDescription,
       material,
