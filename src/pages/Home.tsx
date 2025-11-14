@@ -185,7 +185,7 @@ const Home: React.FC = () => {
       <div className="victorian-divider my-16" />
 
       {/* Featured Products */}
-      <section className="py-20 px-4">
+      <section className="py-10 px-4">
           <div className="mx-auto max-w-5xl px-4">
           <motion.div
             initial="hidden"

@@ -29,8 +29,6 @@ const Header: React.FC = () => {
     { name: 'Veranstaltungen', path: '/events' },
     { name: 'Produkte', path: '/products' },
     { name: 'Werkstatt', path: '/workshop' },
-    { name: 'Über Uns', path: '/about' },
-    { name: 'Steampunk', path: '/history' },
     { name: 'Kontakt', path: '/contact' },
   ];
 
@@ -42,20 +40,16 @@ const Header: React.FC = () => {
           : 'bg-transparent'
       }`}
     >
-      <nav className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
+      <nav className="container mx-auto px-4 py-3">
+  <div className="relative flex items-center">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group">
-            <img
-              src={logoUrl}
-              alt="Aethersalon Logo"
-              className="h-8 w-auto"
-            />
+          <Link to="/" className="flex items-center space-x-2 group flex-shrink-0">
+            <img src={logoUrl} alt="Aethersalon Logo" className="h-7 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
         
-<div className="hidden lg:flex items-center space-x-8 font-normal">
+<div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 items-center space-x-6 font-normal z-10">
   {navLinks.map((link) => (
     <Link
       key={link.path}
@@ -78,7 +72,7 @@ const Header: React.FC = () => {
 
 
           {/* Theme Toggle & Mobile Menu Button */}
-          <div className="flex items-center space-x-4">
+          <div className="ml-auto flex items-center space-x-3 z-20">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}

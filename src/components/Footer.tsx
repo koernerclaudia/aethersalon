@@ -22,13 +22,13 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Right: three columns (navigation + legal + contact) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-3 text-center sm:text-left">
           {/* Navigation Links (first column) */}
           <div>
             <h3 className="text-xl font-heading font-semibold text-brass mb-3">
-              Navigation
+              Aethersalon 1889
             </h3>
-            <ul className="footer-links space-y-3">
+            <ul className="footer-links space-y-2">
               <li>
                 <Link to="/" className="text-theme hover:text-brass transition-colors text-sm">
                   Home
@@ -49,6 +49,16 @@ const Footer: React.FC = () => {
                   Produkte
                 </Link>
               </li>
+               <li>
+                <Link to="/history" className="text-theme hover:text-brass transition-colors text-sm">
+                  Steampunk
+                </Link>
+              </li>
+               <li>
+                <Link to="/about" className="text-theme hover:text-brass transition-colors text-sm">
+                  Über Uns
+                </Link>
+              </li>
               <li>
                 <Link to="/partners" className="text-theme hover:text-brass transition-colors text-sm">
                   Partner
@@ -59,8 +69,18 @@ const Footer: React.FC = () => {
 
           {/* Legal Links & Contact (right) */}
           <div>
+             <h3 className="text-xl font-heading font-semibold text-brass mb-3">
+              Aethersalon 1889
+            </h3>
+            <ul className="footer-links space-y-2">
+              <li>
+                <Link to="/impressum" className="text-theme hover:text-brass transition-colors text-sm">
+                  Impressum
+                </Link>
+              </li>
+              </ul>
             <h3 className="text-xl font-heading font-semibold text-brass mb-3">Rechtliches</h3>
-            <ul className="footer-links space-y-3">
+            <ul className="footer-links space-y-2">
               <li>
                 <Link to="/impressum" className="text-theme hover:text-brass transition-colors text-sm">
                   Impressum
