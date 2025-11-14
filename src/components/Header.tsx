@@ -145,26 +145,39 @@ const Header: React.FC = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden mt-4 pb-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 bg-black/60 z-50"
+              onClick={() => setIsMenuOpen(false)}
             >
-              <div className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={`text-sm font-heading transition-colors ${
-                      location.pathname === link.path
-                        ? 'text-brass'
-                        : 'text-dark-text dark:text-dark-text hover:text-brass'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+              <motion.div
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -10, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="relative z-60 flex items-start justify-center pt-28 px-6"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="w-full max-w-md bg-transparent">
+                  <div className="flex flex-col items-center space-y-4">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.path}
+                        to={link.path}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`text-lg text-center font-heading transition-colors ${
+                          location.pathname === link.path
+                            ? 'text-brass'
+                            : 'text-white hover:text-brass'
+                        }`}
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
