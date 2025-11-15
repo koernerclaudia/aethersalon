@@ -42,10 +42,12 @@ const Partners: React.FC = () => {
           variants={fadeInUp}
           className="text-center mb-12"
         >
+          {/* decorative horizontal rule similar to the footer */}
+          <div className="victorian-divider my-12" />
           <h1 style={{ fontFamily: "'EFCO Brookshire', serif", fontWeight: 400 }} className="text-4xl md:text-5xl text-dark-text mb-4">
             Unsere Partner
           </h1>
-          <p className="text-lg text-dark-text/80">Wir arbeiten mit ausgewählten Werkstätten und Verlagen zusammen.</p>
+          <p className="text-lg text-dark-text/80">...</p>
         </motion.div>
 
         <div className="space-y-8 pb-16">
@@ -57,17 +59,22 @@ const Partners: React.FC = () => {
               variants={fadeInUp}
               className={`flex flex-col md:flex-row items-center gap-6 border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 p-4 md:p-6 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
             >
-              <div className="w-full md:w-1/3 h-[350px] bg-dark-bg/10 flex items-center justify-center">
+              <div className="w-full md:w-1/2 h-[350px] bg-dark-bg/10 flex items-center justify-center">
                 {p.imageUrl ? (
-                  <img src={p.imageUrl} alt={p.name} className="w-full h-[350px] object-cover" />
+                  <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    className="w-full h-full object-cover"
+                    style={{ borderRadius: 10 }}
+                  />
                 ) : (
-                  <div className="w-[320px] h-[320px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
+                  <div className="w-full h-full bg-brass/10 border border-brass/20 rounded-[10px] mx-auto flex items-center justify-center">
                     <span className="text-theme text-sm">Bild fehlt</span>
                   </div>
                 )}
               </div>
 
-              <div className="w-full md:w-2/3 flex flex-col">
+              <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-2xl font-heading font-semibold text-dark-text mb-3">{p.name}</h3>
                 <p className="text-dark-text/80 mb-4">{p.description}</p>
                 <div>

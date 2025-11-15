@@ -10,6 +10,10 @@ type AirtableRecord = {
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 const AIRTABLE_PRODUCTS_TABLE = process.env.AIRTABLE_PRODUCTS_TABLE;
+// Prefer the 'Order' view by default (the user confirmed this view exists and is
+// sorted by the 'Reihenfolge' column). Can be overridden via env var.
+const AIRTABLE_PRODUCTS_VIEW = process.env.AIRTABLE_PRODUCTS_VIEW || 'Order'; // optional: use Airtable view ordering if provided
+const AIRTABLE_ORDER_FIELD = process.env.AIRTABLE_ORDER_FIELD || 'Reihenfolge';
 
 function normalize(records: AirtableRecord[]) {
   // Map the German Airtable schema the user provided to our product shape.
@@ -114,25 +118,52 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
-      AIRTABLE_PRODUCTS_TABLE
-    )}?pageSize=100`;
+    // Fetch all pages from Airtable, requesting an explicit sort by the numeric
+    // field that controls ordering in the base. The user added a "Reihenfolge"
+    // column — we request sort by that field ascending. This guarantees the
+    // returned array is in the desired order. We also append pages sequentially
+    // so the overall order is preserved.
+    const allRecords: AirtableRecord[] = [];
+    let offset: string | undefined = undefined;
 
-    const r = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    });
+    do {
+      const params = new URLSearchParams();
+      params.append('pageSize', '100');
+      // If a view name is provided via env, prefer the Airtable view order
+      // (manual drag order or view-level sorting). Otherwise request an
+      // explicit server-side sort by the numeric order field.
+      if (AIRTABLE_PRODUCTS_VIEW) {
+        params.append('view', AIRTABLE_PRODUCTS_VIEW);
+      } else {
+        params.append('sort[0][field]', AIRTABLE_ORDER_FIELD);
+        params.append('sort[0][direction]', 'asc');
+      }
+      if (offset) params.append('offset', offset);
 
-    if (!r.ok) {
-      const text = await r.text();
-      return res.status(r.status).json({ error: 'Airtable error', details: text });
-    }
+      const pageUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+        AIRTABLE_PRODUCTS_TABLE
+      )}?${params.toString()}`;
 
-    const payload = await r.json();
-    const records: AirtableRecord[] = payload.records || [];
-    const products = normalize(records);
+      const r = await fetch(pageUrl, {
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!r.ok) {
+        const text = await r.text();
+        return res.status(r.status).json({ error: 'Airtable error', details: text });
+      }
+
+      const payload = await r.json();
+      const records: AirtableRecord[] = payload.records || [];
+      allRecords.push(...records);
+      offset = payload.offset;
+    } while (offset);
+
+    // Normalize the full list (normalize uses the array index as stable numeric id)
+    const products = normalize(allRecords);
 
     // Cache for a short time on the edge
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');

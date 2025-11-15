@@ -8,7 +8,7 @@ import { sampleEvents } from '../data/sampleData';
 import { samplePartners } from '../data/partners';
 import logoUrl from '../assets/Aethersalon.svg';
 import logoWordmark from '../assets/logo-wordmark.svg';
-import bgUrl from '../assets/steampunkroom.jpg';
+import bgUrl from '../assets/steampunkroom.webp';
 import ImageCarousel from '../components/ImageCarousel';
 
 
@@ -90,11 +90,11 @@ const Home: React.FC = () => {
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${bgUrl})`,
-            // 'url(https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=1600)',
             filter: 'brightness(0.4)',
           }}
         />
-        <div className="relative z-10 text-center px-4">
+
+       <div className="relative z-10 text-center px-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -129,20 +129,17 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button to="/products" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors glow">
+            <Button to="/products" size="md" className="bg-brass text-dark-bg hover:bg-brass/90">
               Produkte entdecken
             </Button>
-            <Button to="/events" className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors">
+
+            <Button to="/events" size="md" className="border-2 border-brass text-dark-text dark:text-dark-text font-semibold hover:bg-brass/10">
               Veranstaltungen
             </Button>
           </motion.div>
         </div>
       </section>
 
-      {/* Victorian Divider */}
-      <div className="victorian-divider my-16" />
-
-      {/* About Teaser */}
       <section className="py-20 px-4 bg-gradient-to-b from-transparent to-brass/5">
         <div className="container mx-auto max-w-4xl text-center">
           <motion.div
@@ -154,12 +151,16 @@ const Home: React.FC = () => {
             <h2 className="text-4xl md:text-5xl font-heading font-bold text-dark-text dark:text-dark-text mb-6">
               Über Aethersalon 1889
             </h2>
-            <p className="text-lg text-dark-text/80 dark:text-dark-text/80 mb-8 leading-relaxed">
-              Seit 1889 widmen wir uns der faszinierenden Kunst des Steampunk. In unserer Werkstatt
-              entstehen einzigartige Kreationen, die Vergangenheit und Zukunft verbinden. Jedes
-              Stück erzählt seine eigene Geschichte und trägt den Geist der viktorianischen Ära
-              in sich.
-            </p>
+            <div className="mb-8">
+              <div className="text-lg text-dark-text/80 dark:text-dark-text/80 leading-relaxed columns-1 md:columns-2 text-justify" style={{ columnGap: '3rem' }}>
+                <p>
+                  Seit 1889 widmen wir uns der faszinierenden Kunst des Steampunk. In unserer Werkstatt
+                  entstehen einzigartige Kreationen, die Vergangenheit und Zukunft verbinden. Jedes
+                  Stück erzählt seine eigene Geschichte und trägt den Geist der viktorianischen Ära
+                  in sich.
+                </p>
+              </div>
+            </div>
             <Link
               to="/about"
               className="inline-flex items-center text-brass hover:text-brass/80 transition-colors font-semibold"
@@ -181,11 +182,8 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Victorian Divider */}
-      <div className="victorian-divider my-16" />
-
       {/* Featured Products */}
-      <section className="py-10 px-4">
+      <section className="py-20 px-4">
           <div className="mx-auto max-w-5xl px-4">
           <motion.div
             initial="hidden"
@@ -209,9 +207,6 @@ const Home: React.FC = () => {
           <ProductGrid products={featuredProducts} showAll={false} />
         </div>
       </section>
-
-      {/* Victorian Divider */}
-      <div className="victorian-divider my-16" />
 
       {/* Upcoming Events */}
       <section className="py-20 px-4 bg-gradient-to-b from-brass/5 to-transparent">
@@ -238,10 +233,7 @@ const Home: React.FC = () => {
           <EventList events={upcomingEvents} showAll={false} />
         </div>
       </section>
-
-      {/* Victorian Divider */}
-      <div className="victorian-divider my-16" />
-
+<div className="bg-theme-50 border-t border-brass/30"></div>
       {/* Partners */}
       <section className="py-20 px-4">
         <div className="mx-auto max-w-5xl px-4">
@@ -262,7 +254,7 @@ const Home: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={staggerContainer}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
           >
             {partners.slice(0, 4).map((p) => (
               <motion.div key={p.id} variants={fadeInUp} className="border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50">
@@ -280,13 +272,7 @@ const Home: React.FC = () => {
 
                 <div className="p-4 md:p-6 flex flex-col h-full">
                   <h3 className="text-xl font-heading font-semibold text-dark-text mb-2">{p.name}</h3>
-                  <div className="mt-2">
-                      {p.website && (
-                      <Button href={p.website} size="sm" target="_blank" rel="noopener noreferrer" className="bg-brass text-dark-bg hover:bg-brass/90">
-                        Zur Website
-                      </Button>
-                    )}
-                  </div>
+                 
                 </div>
               </motion.div>
             ))}

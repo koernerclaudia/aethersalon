@@ -1,23 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import bgUrl from '../assets/steampunkroom.jpg';
+import bgUrl from '../assets/steampunkroom.webp';
 
 const team = [
   {
-    name: 'Claudia Körner',
-    role: 'Inhaberin & Designerin',
-    bio: 'Leitet den Aethersalon und entwirft maßgeschneiderte Steampunk-Kreationen — von Schmuck bis zu Interieur.',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=60&auto=format&fit=crop',
-  },
-  {
     name: 'Holger Keil',
-    role: 'Werkstattleiter',
-    bio: 'Verantwortlich für Konstruktion, Metallbearbeitung und Mechanik. Er bringt Ideen zum Ticken.',
+    role: 'Hausherr & Werkstattleiter',
+    bio: '... alias Holgi Infinitus Steam - Erfinder, Tüftler & Makerkreativer Holzhandwerker - auf der Suche nach der Symbiose von Steampunk & Wohnen',
     image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=60&auto=format&fit=crop',
   },
   {
-    name: 'Sophie Müller',
+    name: 'Sabine Keil',
     role: 'Events & Kommunikation',
     bio: 'Organisiert Auftritte, Märkte und Kooperationen — Ihre Anlaufstelle für Event-Anfragen.',
     image: 'https://images.unsplash.com/photo-1545996124-1b8a8f2e2f7f?w=800&q=60&auto=format&fit=crop',

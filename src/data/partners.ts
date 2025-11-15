@@ -1,3 +1,8 @@
+/**
+ * Partner describes a workshop, supplier or collaborator displayed in the
+ * Partners page. Keep the shape stable because some pages depend on these
+ * fields when rendering partner cards and links.
+ */
 export type Partner = {
   id: string | number;
   name: string;

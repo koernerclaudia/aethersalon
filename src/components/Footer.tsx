@@ -109,7 +109,7 @@ const Footer: React.FC = () => {
                 <a href="tel:+49123123456" className="text-theme hover:text-brass">+49 123 123456</a>
               </div>
               <div>
-                <a href="mailto:info@aethersalon1889.de" className="text-theme hover:text-brass">info@aethersalon1889.de</a>
+                <a href="mailto:info@aethersalon1889.de" className="text-theme hover:text-brass" target='_blank'>info@aethersalon1889.de</a>
               </div>
             </address>
             <div className="mt-4">
