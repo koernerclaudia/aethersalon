@@ -152,6 +152,25 @@ aethersalon-website/
 6. Cookie-Banner hinzufügen
 7. Google Analytics integrieren
 
+## 🆕 Recent updates
+
+The project has recent UI updates focused on the mobile header and navigation. Summary:
+
+- Centered the logo and navigation on mobile devices for a cleaner layout.
+- Increased mobile navigation font size to improve readability and tap targets (`text-lg`).
+- Mobile linkbar now has a semi-transparent black background (`bg-black/80`) with padding and rounded corners.
+- Active links keep the brass accent color; other mobile links use white text for contrast.
+
+These changes were introduced on branch `feature/mobile-preview` (commit 5a9d161 at the time of writing). If you'd like a narrower commit scope (only the header changes), consider creating a focused branch/PR and I can prepare that for review.
+
+See `docs/CHANGELOG.md` for a brief record of recent edits and their intent.
+
+If you want to roll back or tweak the mobile styles (opacity, padding, text size), change the Tailwind utility classes in `src/components/Header.tsx`:
+
+- Mobile menu container: adjust `bg-black/80`, `px-4`, `py-3`, `rounded-lg` as needed.
+- Mobile link text size: `text-lg` -> `text-xl` or `text-base`.
+- Link colors: `text-white` / `text-brass` can be adjusted to new tokens if you introduce them.
+
 ## 📝 Lizenz
 
 © 2025 Aethersalon 1889. Alle Rechte vorbehalten.
