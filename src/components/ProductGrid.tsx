@@ -69,28 +69,10 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
         whileInView="visible"
         viewport={{ once: true }}
         variants={staggerContainer}
-        className={
-          "flex flex-col gap-8 " +
-          /*
-            Layout behavior:
-            - default (mobile): column (one card per row)
-            - from 500px up: horizontal flex row with snap scrolling showing one card at a time
-            - from md (>=768px): switch to grid with 2 columns
-            - from lg (>=1024px): grid with 4 columns
-          */
-          "min-[500px]:flex-row min-[500px]:overflow-x-auto min-[500px]:snap-x min-[500px]:snap-mandatory md:grid md:grid-cols-3 lg:grid-cols-3"
-        }
+        className={"grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-8"}
       >
         {products.map((product) => (
-          <motion.div
-            key={product.id}
-            variants={fadeInUp}
-            className={
-              "group relative overflow-hidden rounded-lg border border-brass/30 hover:border-brass transition-all duration-300 glow " +
-              /* When in horizontal snap mode, make each card take most of the viewport so one shows at a time. */
-              "min-[500px]:min-w-[85%] md:min-w-0 snap-start"
-            }
-          >
+          <motion.div key={product.id} variants={fadeInUp} className={"group relative overflow-hidden rounded-lg border border-brass/30 hover:border-brass transition-all duration-300 glow w-full"}>
             <div className="relative aspect-square overflow-hidden">
               <img
                 src={product.image}

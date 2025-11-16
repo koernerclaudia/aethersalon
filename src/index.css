@@ -23,14 +23,28 @@
 }
 
 @layer components {
+  
+
   .btn {
-    @apply inline-block rounded-full text-sm font-semibold px-6 py-3 transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    /* increase padding by 2px on all sides (was px-6 py-3 = 24/12px) */
+    @apply inline-flex items-center justify-center leading-none rounded-full text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    padding-left: 26px;
+    padding-right: 26px;
+    padding-top: 14px;
+    padding-bottom: 14px;
   }
 
   /* small variant when existing buttons used smaller padding */
   .btn-sm {
-    @apply inline-block rounded-full text-sm font-semibold px-4 py-2 transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    /* increase padding by 2px on all sides (was px-4 py-2 = 16/8px) */
+    @apply inline-flex items-center justify-center leading-none rounded-full text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-top: 10px;
+    padding-bottom: 10px;
   }
+
+  /* (No explicit .btn-outline defined here — pages may still apply custom classes.) */
 
   /* Decorative victorian divider used between sections */
   .victorian-divider {
@@ -40,6 +54,27 @@
     pointer-events: none;
     /* soft brass gradient to match footer border (rgba(205,171,103) == #cdab67) */
     background: linear-gradient(to right, rgba(205,171,103,0) 0%, rgba(205,171,103,0.6) 50%, rgba(205,171,103,0) 100%);
+  }
+
+  /* Carousel dot controls below image carousel */
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem; /* matches tailwind gap-2 */
+    margin-top: 0.75rem; /* keeps a fixed distance below the carousel */
+  }
+
+  .carousel-dot {
+    width: 0.5rem; /* 8px, similar to w-2 */
+    height: 0.5rem;
+    border-radius: 9999px;
+    background: rgba(205,171,103,0.35); /* muted brass */
+    border: none;
+    padding: 0;
+  }
+
+  .carousel-dot.active {
+    background: rgba(205,171,103,0.95); /* bright brass for active */
   }
 }
 

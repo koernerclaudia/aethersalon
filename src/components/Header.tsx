@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../context/ThemeContext';
-import logoUrl from '../assets/logo-wordmark.svg';
+import logoUrl from '../assets/Wordmark-Logo-Aethersalon1889.svg';
 
 const Header: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,8 +29,8 @@ const Header: React.FC = () => {
     { name: 'Home', path: '/' },
     { name: 'Veranstaltungen', path: '/events' },
     { name: 'Produkte', path: '/products' },
-    { name: 'Werkstatt', path: '/workshop' },
-    { name: 'Kontakt', path: '/contact' },
+    { name: 'Makerspace', path: '/workshop' },
+    { name: 'Über Steampunk', path: '/history' },
   ];
 
   return (
@@ -40,16 +41,20 @@ const Header: React.FC = () => {
           : 'bg-transparent'
       }`}
     >
-      <nav className="container mx-auto px-4 py-3">
-  <div className="relative flex items-center">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group flex-shrink-0">
-            <img src={logoUrl} alt="Aethersalon Logo" className="h-7 w-auto" />
+      <nav className="container mx-auto px-4 py-4">
+        <div className="relative flex items-center justify-between">
+          {/* Logo (hidden on mobile when on Home) */}
+          <Link to="/" className={isHome ? 'hidden lg:flex items-center space-x-2 group' : 'flex items-center space-x-2 group'}>
+            <img
+              src={logoUrl}
+              alt="Aethersalon Logo"
+              className="h-12 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
         
-<div className="hidden lg:flex absolute left-1/2 transform -translate-x-1/2 items-center space-x-6 font-normal z-10">
+<div className="hidden lg:flex items-center space-x-8 font-normal">
   {navLinks.map((link) => (
     <Link
       key={link.path}
@@ -71,8 +76,8 @@ const Header: React.FC = () => {
 </div>
 
 
-          {/* Theme Toggle & Mobile Menu Button */}
-          <div className="ml-auto flex items-center space-x-3 z-20">
+          {/* Theme Toggle & Mobile Menu Button (fixed to right on mobile) */}
+          <div className="absolute right-0 top-0 flex items-center space-x-4 lg:static lg:transform-none">
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
@@ -145,39 +150,27 @@ const Header: React.FC = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 bg-black/60 z-50"
-              onClick={() => setIsMenuOpen(false)}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden mt-4 pb-4 bg-black/80 rounded-lg px-4 py-3"
             >
-              <motion.div
-                initial={{ y: -10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -10, opacity: 0 }}
-                transition={{ duration: 0.18 }}
-                className="relative z-60 flex items-start justify-center pt-28 px-6"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="w-full max-w-md bg-transparent">
-                  <div className="flex flex-col items-center space-y-4">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`text-lg text-center font-heading transition-colors ${
-                          location.pathname === link.path
-                            ? 'text-brass'
-                            : 'text-white hover:text-brass'
-                        }`}
-                      >
-                        {link.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+              {/* Center mobile links and increase font size for better readability/tap targets */}
+                <div className="flex flex-col items-center space-y-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                      className={`w-full text-center text-lg font-heading transition-colors ${
+                        location.pathname === link.path
+                          ? 'text-brass'
+                          : 'text-white hover:text-brass'
+                      }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

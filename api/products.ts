@@ -126,14 +126,23 @@ export default async function handler(req: any, res: any) {
     const allRecords: AirtableRecord[] = [];
     let offset: string | undefined = undefined;
 
+    // allow callers to override view via query param `?view=Featured` on the
+    // request; fall back to env/default `AIRTABLE_PRODUCTS_VIEW` otherwise.
+    const requestedView =
+      // req.query is available in many serverless adapters
+      (req && (req.query as any)?.view) ||
+      // fall back to parsing the raw url if needed
+      (typeof req?.url === 'string' && new URL(req.url, 'http://localhost').searchParams.get('view')) ||
+      AIRTABLE_PRODUCTS_VIEW;
+
     do {
       const params = new URLSearchParams();
       params.append('pageSize', '100');
       // If a view name is provided via env, prefer the Airtable view order
       // (manual drag order or view-level sorting). Otherwise request an
       // explicit server-side sort by the numeric order field.
-      if (AIRTABLE_PRODUCTS_VIEW) {
-        params.append('view', AIRTABLE_PRODUCTS_VIEW);
+      if (requestedView) {
+        params.append('view', requestedView);
       } else {
         params.append('sort[0][field]', AIRTABLE_ORDER_FIELD);
         params.append('sort[0][direction]', 'asc');

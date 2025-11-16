@@ -5,11 +5,14 @@ import ProductGrid from '../components/ProductGrid';
 import EventList from '../components/EventList';
 import Button from '../components/Button';
 import { sampleEvents } from '../data/sampleData';
-import { samplePartners } from '../data/partners';
-import logoUrl from '../assets/Aethersalon.svg';
-import logoWordmark from '../assets/logo-wordmark.svg';
+import logoUrl from '../assets/Full-Logo-Aethersalon1889.svg';
 import bgUrl from '../assets/steampunkroom.webp';
+import sp1 from '../assets/steampunk-1.jpg';
+import sp2 from '../assets/steampunk-2.avif';
+import sp3 from '../assets/steampunk-3.jpg';
+import sp4 from '../assets/steampunk-4.jpg';
 import ImageCarousel from '../components/ImageCarousel';
+import PartnersGrid from '../components/PartnersGrid';
 
 
 const Home: React.FC = () => {
@@ -19,47 +22,18 @@ const Home: React.FC = () => {
     visible: { opacity: 1, y: 0 },
   };
 
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  };
-
   // Featured products: fetch up to 6 products from the API (no sample fallback)
   const [featuredProducts, setFeaturedProducts] = React.useState<any[]>([]);
 
-  const [partners, setPartners] = React.useState(samplePartners);
+  // partners are now provided by the shared PartnersContext/Provider
+  // (the PartnersGrid component will consume the context if no partners prop is passed)
 
   React.useEffect(() => {
     let mounted = true;
     async function load() {
       try {
-        const res = await fetch('/api/partners');
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const payload = await res.json();
-        if (mounted && Array.isArray(payload?.partners)) {
-          setPartners(payload.partners);
-        }
-      } catch (err) {
-        console.warn('Failed to load partners for homepage, using sample partners', err);
-      }
-    }
-
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  React.useEffect(() => {
-    let mounted = true;
-    async function load() {
-      try {
-        const res = await fetch('/api/products');
+        // Request the Airtable view named 'Featured' for homepage featured items
+        const res = await fetch('/api/products?view=Featured');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const payload = await res.json();
         if (mounted && Array.isArray(payload?.products)) {
@@ -78,7 +52,77 @@ const Home: React.FC = () => {
       mounted = false;
     };
   }, []);
-  const upcomingEvents = sampleEvents.slice(0, 3);
+  const [upcomingEvents, setUpcomingEvents] = React.useState<any[]>(sampleEvents.slice(0, 3));
+
+  React.useEffect(() => {
+    let mounted = true;
+
+    function parseEventDate(e: any): Date | null {
+      const raw = e.raw || {};
+
+      const find = (cands: string[]) => {
+        for (const c of cands) {
+          const v = raw[c];
+          if (v !== undefined && v !== null) return v;
+        }
+        return undefined;
+      };
+
+      // Prefer explicit 'von' (start) field if present, then fall back to common date fields.
+      let maybe = find(['von', 'Von', 'from', 'From', 'start', 'Start']);
+      if (maybe === undefined) maybe = find(['Datum', 'datum', 'Date', 'date']);
+      if (!maybe) maybe = e.date || '';
+
+      // If Airtable returns arrays for date/time fields, pick the first element
+      if (Array.isArray(maybe) && maybe.length > 0) maybe = maybe[0];
+
+      if (!maybe) return null;
+      const d = new Date(maybe);
+      if (!Number.isNaN(d.getTime())) return d;
+      return null;
+    }
+
+    async function load() {
+      try {
+        const res = await fetch('/api/events');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (!mounted) return;
+        if (Array.isArray(payload?.events)) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          const upcoming = payload.events
+            .filter((ev: any) => {
+              const d = parseEventDate(ev);
+              // Only include events with a parseable date and that are today or later.
+              if (!d) return false;
+              d.setHours(0, 0, 0, 0);
+              return d >= today;
+            })
+            .sort((a: any, b: any) => {
+              const da = parseEventDate(a);
+              const db = parseEventDate(b);
+              if (!da && !db) return 0;
+              if (!da) return 1;
+              if (!db) return -1;
+              return da.getTime() - db.getTime();
+            })
+            .slice(0, 3);
+
+          setUpcomingEvents(upcoming);
+        }
+      } catch (err) {
+        console.warn('Failed to load events for homepage, using sample events', err);
+        if (mounted) setUpcomingEvents(sampleEvents.slice(0, 3));
+      }
+    }
+
+    load();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   // partners now sourced from shared samplePartners data
 
@@ -104,24 +148,26 @@ const Home: React.FC = () => {
             <img
               src={logoUrl}
               alt="Aethersalon 1889 Logo"
-              className="w-64 md:w-96 xl:w-[40rem] mx-auto drop-shadow-2xl"
+              className="w-[70%] md:w-[40%] lg:w-[40%] xl:w-[60%] mx-auto drop-shadow-2xl"
             />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-5xl md:text-7xl font-heading font-bold text-dark-text dark:text-dark-text mb-6 text-shadow"
+            className="text-5xl md:text-7xl font-heading font-bold mb-6 text-shadow"
           >
-            Willkommen im Aethersalon 1889
+            Willkommen an Bord!
+           
+            
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-dark-text dark:text-dark-text mb-8 max-w-2xl mx-auto"
+            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
           >
-            Die Zeitreise in die Welt des Steampunk
+            Reise in eine Ära voller Innovation, Abenteuer und viktorianischem Stil.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -129,11 +175,11 @@ const Home: React.FC = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button to="/products" size="md" className="bg-brass text-dark-bg hover:bg-brass/90">
+            <Button to="/products" size="md" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors mt-0 shadow-lg border border-brass/30">
               Produkte entdecken
             </Button>
 
-            <Button to="/events" size="md" className="border-2 border-brass text-dark-text dark:text-dark-text font-semibold hover:bg-brass/10">
+            <Button to="/events" size="md" className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors shadow-sm">
               Veranstaltungen
             </Button>
           </motion.div>
@@ -148,11 +194,11 @@ const Home: React.FC = () => {
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <h2 className="text-4xl md:text-5xl font-heading font-bold text-dark-text dark:text-dark-text mb-6">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
               Über Aethersalon 1889
             </h2>
             <div className="mb-8">
-              <div className="text-lg text-dark-text/80 dark:text-dark-text/80 leading-relaxed columns-1 md:columns-2 text-justify" style={{ columnGap: '3rem' }}>
+              <div className="text-lg leading-relaxed columns-1 md:columns-2 text-justify" style={{ columnGap: '3rem' }}>
                 <p>
                   Seit 1889 widmen wir uns der faszinierenden Kunst des Steampunk. In unserer Werkstatt
                   entstehen einzigartige Kreationen, die Vergangenheit und Zukunft verbinden. Jedes
@@ -194,12 +240,12 @@ const Home: React.FC = () => {
           >
             <h2
   style={{ fontFamily: "'EFCO Brookshire', serif", fontWeight: 400 }}
-  className="text-4xl md:text-5xl text-dark-text mb-4"
+  className="text-4xl md:text-5xl mb-4"
 >
   Ausgewählte Werke
 </h2>
 
-            <p className="text-lg text-dark-text/80 dark:text-dark-text/80">
+            <p className="text-lg">
               Entdecken Sie einzigartige Steampunk-Kreationen
             </p>
           </motion.div>
@@ -216,69 +262,28 @@ const Home: React.FC = () => {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
-            className="text-center mb-12"
+            className="mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-heading font-bold text-dark-text dark:text-dark-text mb-4">
-              Kommende Veranstaltungen
-            </h2>
-            <p className="text-lg text-dark-text/80 dark:text-dark-text/80">
+            <div className="text-center md:text-left mb-4">
+              <h2 className="text-4xl md:text-5xl font-heading font-bold">
+                Kommende Veranstaltungen
+              </h2>
+            </div>
+
+            <p className="text-lg">
               Treffen Sie uns auf diesen Events
             </p>
           </motion.div>
 
-          <div className="mb-8">
-            <ImageCarousel images={[bgUrl, logoUrl, logoWordmark]} heightClass="h-[300px] md:h-[350px]" />
-          </div>
-
           <EventList events={upcomingEvents} showAll={false} />
+          <div className="mb-8 mt-8">
+            <ImageCarousel images={[sp1, sp2, sp3, sp4]} heightClass="h-[300px] md:h-[350px]" />
+          </div>
         </div>
       </section>
 <div className="bg-theme-50 border-t border-brass/30"></div>
-      {/* Partners */}
-      <section className="py-20 px-4">
-        <div className="mx-auto max-w-5xl px-4">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeInUp}
-            className="text-center mb-12"
-          >
-            <h2 className="text-4xl md:text-5xl font-heading font-bold text-dark-text dark:text-dark-text mb-4">
-              Partner & Unterstützer
-            </h2>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={staggerContainer}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
-          >
-            {partners.slice(0, 4).map((p) => (
-              <motion.div key={p.id} variants={fadeInUp} className="border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50">
-                <div className="w-full h-[250px] bg-dark-bg/10 flex items-center justify-center">
-                  {p.imageUrl ? (
-                    <img src={p.imageUrl} alt={p.name} className="w-full h-[250px] object-cover" />
-                  ) : (
-                    <div className="text-center px-4">
-                      <div className="w-[250px] h-[250px] bg-brass/10 border border-brass/20 rounded-md mx-auto flex items-center justify-center">
-                        <span className="text-theme text-sm">Bild fehlt</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-4 md:p-6 flex flex-col h-full">
-                  <h3 className="text-xl font-heading font-semibold text-dark-text mb-2">{p.name}</h3>
-                 
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+  {/* Partners */}
+  <PartnersGrid count={4}/>
     </div>
   );
 };

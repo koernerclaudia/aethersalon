@@ -13,7 +13,7 @@ export default {
         },
         // Light Mode Colors
         light: {
-          bg: '#f6e9bd',
+          bg: '#efefef',
           text: '#20222A',
           accent: '#cdab67',
         },

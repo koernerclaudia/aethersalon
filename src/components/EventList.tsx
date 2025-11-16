@@ -65,7 +65,50 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
                     >
                       <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    {event.date}
+                    {(() => {
+                      // Prefer explicit 'von'/'bis' fields from Airtable raw fields when present.
+                      const raw = (event as any).raw || {};
+
+                      const find = (cands: string[]) => {
+                        for (const c of cands) {
+                          if (raw[c]) return raw[c];
+                        }
+                        return undefined;
+                      };
+
+                      const fromVal = find(['von', 'Von', 'from', 'From', 'start', 'Start']);
+                      const toVal = find(['bis', 'Bis', 'to', 'To', 'end', 'Ende']);
+
+                      const formatVal = (v: any) => {
+                        if (!v) return null;
+                        let s = v;
+                        if (Array.isArray(v) && v.length > 0) s = v[0];
+                        if (typeof s !== 'string') return String(s);
+                        const d = new Date(s);
+                        if (!Number.isNaN(d.getTime())) {
+                          try {
+                            return new Intl.DateTimeFormat('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }).format(d);
+                          } catch (_e) {
+                            return s;
+                          }
+                        }
+                        return s;
+                      };
+
+                      const fromStr = formatVal(fromVal);
+                      const toStr = formatVal(toVal);
+
+                      if (fromStr && toStr) {
+                        // if identical dates, show single
+                        if (fromStr === toStr) return fromStr;
+                        return `${fromStr} — ${toStr}`;
+                      }
+
+                      if (fromStr) return fromStr;
+                      if (toStr) return `bis ${toStr}`;
+
+                      return event.date || '';
+                    })()}
                   </span>
                   <span className="flex items-center">
                     <svg
@@ -117,7 +160,7 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
                 </div>
               </div>
               <Button
-                to={`/events/${event.id}`}
+                to={`/events/${(event as any).rawId || event.id}`}
                 size="sm"
                 className="mt-4 md:mt-0 bg-brass text-dark-bg hover:bg-brass/90 transition-colors"
               >

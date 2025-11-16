@@ -1,20 +1,23 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import PartnersGrid from '../components/PartnersGrid';
 import bgUrl from '../assets/steampunkroom.webp';
+import manImg from '../assets/Steampunk-man.webp';
+import womanImg from '../assets/Steampunk-woman.webp';
 
 const team = [
   {
     name: 'Holger Keil',
     role: 'Hausherr & Werkstattleiter',
     bio: '... alias Holgi Infinitus Steam - Erfinder, Tüftler & Makerkreativer Holzhandwerker - auf der Suche nach der Symbiose von Steampunk & Wohnen',
-    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=60&auto=format&fit=crop',
+  image: manImg,
   },
   {
-    name: 'Sabine Keil',
+    name: 'Simone Keil',
     role: 'Events & Kommunikation',
     bio: 'Organisiert Auftritte, Märkte und Kooperationen — Ihre Anlaufstelle für Event-Anfragen.',
-    image: 'https://images.unsplash.com/photo-1545996124-1b8a8f2e2f7f?w=800&q=60&auto=format&fit=crop',
+   image: womanImg,
   },
 ];
 
@@ -70,17 +73,8 @@ const About: React.FC = () => {
         ))}
       </section>
 
-      {/* Partners (reuse style from Home) */}
-      <section className="container mx-auto max-w-5xl mt-20">
-        <h2 className="text-3xl font-heading font-bold text-theme mb-6">Partner & Unterstützer</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-          {['Partner 1', 'Partner 2', 'Partner 3', 'Partner 4', 'Partner 5', 'Partner 6'].map((p) => (
-            <div key={p} className="flex items-center justify-center p-4 border border-brass/30 rounded-lg bg-theme-50">
-              <span className="text-theme font-heading text-sm">{p}</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Partners */}
+      <PartnersGrid count={4} />
 
       {/* Quick links cards */}
       <section className="container mx-auto max-w-5xl mt-20">

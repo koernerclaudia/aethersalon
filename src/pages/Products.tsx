@@ -73,10 +73,6 @@ const Products: React.FC = () => {
             und verbindet viktorianische Eleganz mit modernem Design.
           </p>
         </motion.div>
-
-        {/* Victorian Divider */}
-        <div className="victorian-divider my-12" />
-
         {/* Status */}
         {loading && (
           <div className="text-center mb-6 text-sm text-dark-text/70">Lade Produkte…</div>

@@ -13,21 +13,21 @@ const gallery = [
   'https://images.unsplash.com/photo-1532634896-26909d0d1d9a?w=1200&q=60&auto=format&fit=crop',
 ];
 
-const team = [
+const werkstatt = [
   {
-    name: 'Claudia Körner',
-    role: 'Inhaberin & Designerin',
-    bio: 'Leitet den Aethersalon und entwirft maßgeschneiderte Steampunk-Kreationen — von Schmuck bis zu Interieur.',
-    image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=60&auto=format&fit=crop',
-  },
-  {
-    name: 'Holger Keil',
+    name: 'Location',
     role: 'Werkstattleiter',
     bio: 'Verantwortlich für Konstruktion, Metallbearbeitung und Mechanik. Er bringt Ideen zum Ticken.',
     image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=60&auto=format&fit=crop',
   },
   {
-    name: 'Sophie Müller',
+    name: 'Makerspace',
+    role: 'Events & Kommunikation',
+    bio: ' "Ein Raum, sich mit Gleichgesinnten kreativ zu verwirklichen. " Gemeinschaftliche Nutzung von Ressourcen zur Holz-/Metall- und Kunststoff-Bearbeitung. Zu sogenannten Makerdays verwandelt sich die Werkstatt zu einen universalen Kreativzentrum,wo die Teilnehmer das zur Verfügung stehende Equipment für die Umsetzung ihrer Ideen nutzenKönnen und sich gegenseitig mit Rat und Tat zur Seite stehen.',
+    image: 'https://images.unsplash.com/photo-1545996124-1b8a8f2e2f7f?w=800&q=60&auto=format&fit=crop',
+  },
+  {
+    name: 'Veranstaltungen',
     role: 'Events & Kommunikation',
     bio: 'Organisiert Auftritte, Märkte und Kooperationen — Ihre Anlaufstelle für Event-Anfragen.',
     image: 'https://images.unsplash.com/photo-1545996124-1b8a8f2e2f7f?w=800&q=60&auto=format&fit=crop',
@@ -36,6 +36,23 @@ const team = [
 
 const Workshop: React.FC = () => {
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
+  const cards = [
+    {
+      image: gallery[0],
+      title: 'Maßgeschneiderte Anfertigungen',
+      text: 'Individuelle Entwürfe und Kleinserien – von der Idee bis zum fertigen Objekt begleiten wir Sie durch den ganzen Prozess.',
+    },
+    {
+      image: gallery[1],
+      title: 'Restaurierung & Pflege',
+      text: 'Sorgfältige Überholung historischer Stücke sowie Wartung mechanischer Teile durch erfahrene Handwerker.',
+    },
+    {
+      image: gallery[2],
+      title: 'Workshops & Einführung',
+      text: 'Praktische Kurse für Einsteiger und Fortgeschrittene: Löten, Ziselieren und mechanische Grundlagen.',
+    },
+  ];
   return (
     <div className="min-h-screen px-4 pb-20">
       {/* Hero */}
@@ -52,7 +69,7 @@ const Workshop: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-4xl md:text-6xl font-heading font-bold text-theme mb-4"
           >
-            Werkstatt & Atelier
+            Werkstatt & Makerspace
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -66,9 +83,22 @@ const Workshop: React.FC = () => {
         </div>
       </section>
 
-      {/* Team (same structure as About) */}
+      {/* Highlights: three-card section */}
+      <section className="container mx-auto max-w-5xl mt-12">
+        <h2 className="text-3xl font-heading font-bold text-theme mb-6">Highlights</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {cards.map((c) => (
+            <div key={c.title} className="p-6 rounded-lg border border-brass/30 bg-theme-50">
+              <img src={c.image} alt={c.title} className="w-full h-40 object-cover rounded-md mb-4" />
+              <h3 className="text-xl font-semibold text-theme mb-2">{c.title}</h3>
+              <p className="text-theme-80">{c.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="container mx-auto max-w-5xl mt-12 space-y-16">
-        {team.map((m, i) => (
+        {werkstatt.map((m, i) => (
           <div
             key={m.name}
             className={`flex flex-col md:flex-row items-center gap-6 md:gap-12 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}

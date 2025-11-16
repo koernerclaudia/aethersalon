@@ -51,7 +51,7 @@ export const PasswordGate: React.FC<PasswordGateProps> = ({ children }) => {
         <header className="mb-4">
           <div className="text-xs tracking-widest uppercase text-[#d7b98b] mb-1">AETHERSALON 1889</div>
           <h1 className="text-xl font-semibold flex items-center gap-2"> <span className="inline-flex w-6 h-6 rounded-full border border-[rgba(255,215,160,0.6)] items-center justify-center text-xs">🔐</span>Zugang zur Webseite</h1>
-          <p className="text-sm text-[rgba(244,232,216,0.75)] mt-2">This section of the salon is reserved. Enter the access phrase to unlock the atelier.</p>
+          <p className="text-sm text-[rgba(244,232,216,0.75)] mt-2">Dieser Bereich des Salons ist reserviert. Gib das Zugangspasswort ein, um das Atelier freizuschalten.</p>
         </header>
 
         <form onSubmit={handleSubmit} className="mt-2">
@@ -73,8 +73,8 @@ export const PasswordGate: React.FC<PasswordGateProps> = ({ children }) => {
         </form>
 
         <footer className="mt-4 text-xs text-[rgba(244,232,216,0.6)] flex justify-between">
-          <span>Authorized invitees only.</span>
-          <span className="opacity-80">1899-K</span>
+          <span>Nur autorisierte Eingeladene.</span>
+          <span className="opacity-80">1889-K</span>
         </footer>
       </div>
     </div>

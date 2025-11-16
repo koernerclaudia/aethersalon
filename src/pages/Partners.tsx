@@ -32,6 +32,18 @@ const Partners: React.FC = () => {
     };
   }, []);
 
+  // If navigated here with a hash like #partner-<id>, scroll that element into view
+  React.useEffect(() => {
+    const hash = window.location.hash;
+    if (hash) {
+      // delay slightly to allow layout and images to load
+      setTimeout(() => {
+        const el = document.querySelector(hash);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 250);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen pt-24 px-4">
       <div className="mx-auto max-w-5xl">
@@ -42,8 +54,7 @@ const Partners: React.FC = () => {
           variants={fadeInUp}
           className="text-center mb-12"
         >
-          {/* decorative horizontal rule similar to the footer */}
-          <div className="victorian-divider my-12" />
+         
           <h1 style={{ fontFamily: "'EFCO Brookshire', serif", fontWeight: 400 }} className="text-4xl md:text-5xl text-dark-text mb-4">
             Unsere Partner
           </h1>
@@ -54,6 +65,7 @@ const Partners: React.FC = () => {
           {partners.map((p, i) => (
             <motion.section
               key={p.id}
+              id={`partner-${p.id}`}
               initial="hidden"
               whileInView="visible"
               variants={fadeInUp}
