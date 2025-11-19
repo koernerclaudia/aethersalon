@@ -18,7 +18,7 @@ type Product = {
   price?: number;
 };
 
-const Products: React.FC = () => {
+const Moebelstuecke: React.FC = () => {
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 },
@@ -33,26 +33,25 @@ const Products: React.FC = () => {
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch('/api/products');
+        // Request only Möbelstück items from the API
+        const res = await fetch(`/api/products?only=${encodeURIComponent('Möbelstück')}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const payload = await res.json();
-        if (payload?.products && Array.isArray(payload.products) && payload.products.length > 0) {
+        if (payload?.products && Array.isArray(payload.products)) {
           if (!mounted) return;
           setProducts(payload.products);
         }
       } catch (err: any) {
-        console.warn('Failed to fetch /api/products, using sample data:', err?.message || err);
+        console.warn('Failed to fetch Möbelstücke from /api/products — falling back to sample data:', err?.message || err);
         if (!mounted) return;
-        setError('Remote products could not be loaded — showing sample data.');
+        setError('Möbelstücke konnten nicht geladen werden — Beispiel-Daten werden angezeigt.');
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
     load();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   return (
@@ -66,16 +65,16 @@ const Products: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-5xl md:text-6xl font-heading font-bold text-dark-text dark:text-dark-text mb-6">
-            Unsere Verkaufsobjekte
+            Möbelstücke
           </h1>
           <p className="text-lg text-dark-text dark:text-dark-text max-w-2xl mx-auto">
-            Entdecken Sie unsere handgefertigten Steampunk-Kreationen. Jedes Stück ist ein Unikat
-            und verbindet viktorianische Eleganz mit modernem Design.
+            Unsere ausgewählten Möbelstücke: handgefertigte Einrichtungsobjekte mit Steampunk-Ästhetik.
           </p>
         </motion.div>
+
         {/* Status */}
         {loading && (
-          <div className="text-center mb-6 text-sm text-dark-text/70">Lade Produkte…</div>
+          <div className="text-center mb-6 text-sm text-dark-text/70">Lade Möbelstücke…</div>
         )}
         {error && (
           <div className="text-center mb-6 text-sm text-red-500">{error}</div>
@@ -88,7 +87,7 @@ const Products: React.FC = () => {
           variants={fadeInUp}
           transition={{ delay: 0.2 }}
         >
-          <ProductGrid products={products} showAll={true} />
+                <ProductGrid products={products} showAll={true} hideCategory={true} hideStock={true} />
         </motion.div>
 
         {/* Info Section */}
@@ -99,16 +98,16 @@ const Products: React.FC = () => {
           transition={{ delay: 0.4 }}
           className="mt-20 text-center"
         >
-          <div className="max-w-3xl mx-auto p-8 border border-brass/30 rounded-lg bg-dark-bg/50 dark:bg-dark-bg/50">
+          <div className="max-w-3xl mx-auto p-8 border border-brass/30 rounded-lg bg-dark-bg/50">
             <h2 className="text-2xl font-heading font-semibold text-brass mb-4">
-              Interesse an einem Produkt?
+              Interesse an einem Möbelstück?
             </h2>
             <p className="text-dark-text dark:text-dark-text mb-6">
-              Kontaktieren Sie uns für weitere Informationen, Preise und Verfügbarkeit.
-              Wir fertigen auch individuelle Aufträge nach Ihren Wünschen.
+              Kontaktieren Sie uns für Details, Lieferzeiten und Preise. Viele unserer Möbelstücke
+              sind Unikate oder Kleinserien.
             </p>
             <Button
-              href="mailto:info@aethersalon1889.de?subject=Produktanfrage"
+              href="mailto:info@aethersalon1889.de?subject=M%C3%B6belst%C3%BCck-Anfrage"
               className="bg-brass text-dark-bg hover:bg-brass/90"
             >
               Anfrage senden
@@ -120,4 +119,4 @@ const Products: React.FC = () => {
   );
 };
 
-export default Products;
+export default Moebelstuecke;

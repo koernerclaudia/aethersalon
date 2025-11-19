@@ -7,6 +7,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Products from './pages/Products';
+import Moebelstuecke from './pages/Moebelstuecke';
 import Partners from './pages/Partners';
 import Events from './pages/Events';
 import ProductDetails from './pages/ProductDetails';
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/events" element={<Events />} />
                 <Route path="/events/:id" element={<EventDetails />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/moebelstuecke" element={<Moebelstuecke />} />
                 <Route path="/partners" element={<Partners />} />
                 <Route path="/products/:id" element={<ProductDetails />} />
                 <Route path="/history" element={<History />} />

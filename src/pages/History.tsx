@@ -62,7 +62,7 @@ const History: React.FC = () => {
       </section>
 
       {/* Content (copied from About layout) */}
-      <section className="container mx-auto max-w-5xl mt-12 space-y-16">
+      <section className="mx-auto max-w-5xl px-4 mt-12 space-y-16">
         {history.map((m, i) => (
           <div
             key={m.name}

@@ -33,7 +33,7 @@ const About: React.FC = () => {
           style={{ backgroundImage: `url(${bgUrl})`, filter: 'brightness(0.45)' }}
           aria-hidden
         />
-        <div className="relative z-10 container mx-auto max-w-4xl text-center">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Team sections */}
-      <section className="container mx-auto max-w-5xl mt-12 space-y-16">
+      <section className="mx-auto max-w-5xl px-4 mt-12 space-y-16">
         {team.map((m, i) => (
           <div
             key={m.name}
@@ -77,7 +77,7 @@ const About: React.FC = () => {
       <PartnersGrid count={4} />
 
       {/* Quick links cards */}
-      <section className="container mx-auto max-w-5xl mt-20">
+      <section className="mx-auto max-w-5xl px-4 mt-20">
         <h2 className="text-3xl font-heading font-bold text-theme mb-6">Schnellzugriff</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Link to="/events" className="block p-6 rounded-lg border border-brass/30 bg-theme-50 hover:shadow-lg transition-shadow">

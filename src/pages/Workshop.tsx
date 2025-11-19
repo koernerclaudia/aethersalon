@@ -3,28 +3,31 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import bgUrl from '../assets/werkstatt.webp';
 import Lightbox from '../components/Lightbox';
+import d3druck from '../assets/3D-Druck.webp';
+import schweißplatz from '../assets/Schweißplatz.webp';
+import werkstattImg from '../assets/Werkstatt2.webp';
+import makerspace from '../assets/makerspace.webp';
 
+// Use module imports for local assets so Vite bundles them correctly.
 const gallery = [
-  'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?w=1200&q=60&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1527252009472-3c5a5f7b2d0b?w=1200&q=60&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&q=60&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&q=60&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=1200&q=60&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1532634896-26909d0d1d9a?w=1200&q=60&auto=format&fit=crop',
+  d3druck,
+  schweißplatz,
+  schweißplatz,
+  d3druck,
 ];
 
 const werkstatt = [
   {
-    name: 'Location',
-    role: 'Werkstattleiter',
-    bio: 'Verantwortlich für Konstruktion, Metallbearbeitung und Mechanik. Er bringt Ideen zum Ticken.',
-    image: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=800&q=60&auto=format&fit=crop',
+    name: 'Aethersalon - 1889 Werkstatt',
+    role: 'Unser Ort der Magie',
+    bio: '...',
+    image: werkstattImg,
   },
   {
     name: 'Makerspace',
     role: 'Events & Kommunikation',
-    bio: ' "Ein Raum, sich mit Gleichgesinnten kreativ zu verwirklichen. " Gemeinschaftliche Nutzung von Ressourcen zur Holz-/Metall- und Kunststoff-Bearbeitung. Zu sogenannten Makerdays verwandelt sich die Werkstatt zu einen universalen Kreativzentrum,wo die Teilnehmer das zur Verfügung stehende Equipment für die Umsetzung ihrer Ideen nutzenKönnen und sich gegenseitig mit Rat und Tat zur Seite stehen.',
-    image: 'https://images.unsplash.com/photo-1545996124-1b8a8f2e2f7f?w=800&q=60&auto=format&fit=crop',
+    bio: ' Ein Raum, sich mit Gleichgesinnten kreativ zu verwirklichen. Gemeinschaftliche Nutzung von Ressourcen zur Holz-/Metall- und Kunststoff-Bearbeitung. Zu sogenannten Makerdays verwandelt sich die Werkstatt zu einen universalen Kreativzentrum,wo die Teilnehmer das zur Verfügung stehende Equipment für die Umsetzung ihrer Ideen nutzenKönnen und sich gegenseitig mit Rat und Tat zur Seite stehen.',
+    image: makerspace,
   },
   {
     name: 'Veranstaltungen',
@@ -39,18 +42,23 @@ const Workshop: React.FC = () => {
   const cards = [
     {
       image: gallery[0],
-      title: 'Maßgeschneiderte Anfertigungen',
-      text: 'Individuelle Entwürfe und Kleinserien – von der Idee bis zum fertigen Objekt begleiten wir Sie durch den ganzen Prozess.',
+      title: 'Lackierraum',
+      text: '...',
     },
     {
       image: gallery[1],
-      title: 'Restaurierung & Pflege',
-      text: 'Sorgfältige Überholung historischer Stücke sowie Wartung mechanischer Teile durch erfahrene Handwerker.',
+      title: 'Elektronikplatz',
+      text: '...',
     },
     {
       image: gallery[2],
-      title: 'Workshops & Einführung',
-      text: 'Praktische Kurse für Einsteiger und Fortgeschrittene: Löten, Ziselieren und mechanische Grundlagen.',
+      title: 'Schweißplatz',
+      text: '...',
+    },
+    {
+      image: gallery[3],
+      title: '3D Drucker Ecke',
+      text: '...',
     },
   ];
   return (
@@ -62,7 +70,7 @@ const Workshop: React.FC = () => {
           style={{ backgroundImage: `url(${bgUrl})`, filter: 'brightness(0.45)' }}
           aria-hidden
         />
-        <div className="relative z-10 container mx-auto max-w-4xl text-center">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -77,27 +85,12 @@ const Workshop: React.FC = () => {
             transition={{ delay: 0.15 }}
             className="text-lg text-theme-80 max-w-3xl mx-auto"
           >
-            In unserer Werkstatt werden mechanische Objekte von Hand gefertigt — Reparatur,
-            Restauration und individuelle Anfertigungen nach Kundenwunsch.
+            In unserer Werkstatt werden mechanische Objekte von Hand gefertigt.<br></br> Sie bietet Raum, sich mit Gleichgesinnten kreativ zu verwirklichen.
           </motion.p>
         </div>
       </section>
 
-      {/* Highlights: three-card section */}
-      <section className="container mx-auto max-w-5xl mt-12">
-        <h2 className="text-3xl font-heading font-bold text-theme mb-6">Highlights</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cards.map((c) => (
-            <div key={c.title} className="p-6 rounded-lg border border-brass/30 bg-theme-50">
-              <img src={c.image} alt={c.title} className="w-full h-40 object-cover rounded-md mb-4" />
-              <h3 className="text-xl font-semibold text-theme mb-2">{c.title}</h3>
-              <p className="text-theme-80">{c.text}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="container mx-auto max-w-5xl mt-12 space-y-16">
+      <section className="mx-auto max-w-5xl px-4 mt-12 space-y-16">
         {werkstatt.map((m, i) => (
           <div
             key={m.name}
@@ -107,7 +100,7 @@ const Workshop: React.FC = () => {
               <img src={m.image} alt={m.name} className="w-full h-64 object-cover rounded-lg shadow-md" />
             </div>
             <div className="md:w-1/2">
-              <h3 className="text-2xl font-heading font-semibold text-theme mb-2">{m.name}</h3>
+              <h3 className="text-3xl font-heading font-semibold text-theme mb-2">{m.name}</h3>
               <div className="text-sm text-brass mb-3">{m.role}</div>
               <p className="text-theme-80 leading-relaxed">{m.bio}</p>
             </div>
@@ -115,8 +108,26 @@ const Workshop: React.FC = () => {
         ))}
       </section>
 
+      {/* Highlights: three-card section */}
+      <section className="mx-auto max-w-5xl px-4 mt-12">
+        <h2 className="text-3xl font-heading font-bold text-theme mb-6">Highlights</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {cards.map((c) => (
+            <div key={c.title} className="rounded-lg border border-brass/30 bg-theme-50 overflow-hidden">
+              <div className="relative w-full aspect-[4/3]">
+                <img src={c.image} alt={c.title} className="absolute inset-0 w-full h-full object-cover" />
+              </div>
+              <div className="p-6">
+                <h3 className="text-2xl font-semibold text-theme mb-2">{c.title}</h3>
+                <p className="text-theme-80">{c.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Services */}
-      <section className="container mx-auto max-w-5xl mt-12">
+      <section className="mx-auto max-w-5xl px-4 mt-12">
         <h2 className="text-3xl font-heading font-bold text-theme mb-6">Was wir anbieten</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="p-6 rounded-lg border border-brass/30 bg-theme-50">
@@ -135,7 +146,7 @@ const Workshop: React.FC = () => {
       </section>
 
       {/* Mosaic gallery (column-based masonry: equal column widths, natural photo heights) */}
-      <section className="container mx-auto max-w-5xl mt-12">
+      <section className="mx-auto max-w-5xl px-4 mt-12">
         <h2 className="text-3xl font-heading font-bold text-theme mb-6">Werkstatt Einblicke</h2>
         <div className="columns-3" style={{ columnGap: '1.25rem' }}>
           {gallery.map((src, i) => (
@@ -170,7 +181,7 @@ const Workshop: React.FC = () => {
       </section>
 
       {/* Quick links */}
-      <section className="container mx-auto max-w-5xl mt-12">
+      <section className="mx-auto max-w-5xl px-4 mt-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link to="/events" className="block p-6 rounded-lg border border-brass/30 bg-theme-50 hover:shadow-lg transition-shadow">
             <h3 className="text-xl font-semibold text-theme mb-2">Kommende Workshops</h3>

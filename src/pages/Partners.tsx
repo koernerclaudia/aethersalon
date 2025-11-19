@@ -58,7 +58,7 @@ const Partners: React.FC = () => {
           <h1 style={{ fontFamily: "'EFCO Brookshire', serif", fontWeight: 400 }} className="text-4xl md:text-5xl text-dark-text mb-4">
             Unsere Partner
           </h1>
-          <p className="text-lg text-dark-text/80">...</p>
+          <p className="text-lg text-dark-text">...</p>
         </motion.div>
 
         <div className="space-y-8 pb-16">
@@ -88,7 +88,7 @@ const Partners: React.FC = () => {
 
               <div className="w-full md:w-1/2 flex flex-col">
                 <h3 className="text-2xl font-heading font-semibold text-dark-text mb-3">{p.name}</h3>
-                <p className="text-dark-text/80 mb-4">{p.description}</p>
+                <p className="text-dark-text mb-4">{p.description}</p>
                 <div>
                   {p.website && (
                     <Button href={p.website} size="sm" target="_blank" rel="noopener noreferrer" className="bg-brass text-dark-bg hover:bg-brass/90">

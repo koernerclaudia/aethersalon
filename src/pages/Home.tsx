@@ -148,38 +148,34 @@ const Home: React.FC = () => {
             <img
               src={logoUrl}
               alt="Aethersalon 1889 Logo"
-              className="w-[70%] md:w-[40%] lg:w-[40%] xl:w-[60%] mx-auto drop-shadow-2xl"
+              className="w-[40%] md:w-[40%] lg:w-[40%] xl:w-[50%] mx-auto drop-shadow-2xl"
             />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-5xl md:text-7xl font-heading font-bold mb-6 text-shadow"
+                className="text-5xl md:text-7xl font-heading font-bold mb-6 text-shadow text-dark-text dark:text-dark-text"
           >
-            Willkommen an Bord!
-           
-            
+            Willkommen <span className="block sm:inline">an Bord!</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto"
+            className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-dark-text"
           >
             Reise in eine Ära voller Innovation, Abenteuer und viktorianischem Stil.
           </motion.p>
-          <motion.div
+            <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col gap-4 justify-center"
           >
-            <Button to="/products" size="md" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors mt-0 shadow-lg border border-brass/30">
-              Produkte entdecken
+            <Button to="/products" className="bg-brass text-dark-bg hover:bg-brass/90 transition-colors glow">Produkte entdecken
             </Button>
-
-            <Button to="/events" size="md" className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors shadow-sm">
+            <Button to="/events" className="border-2 border-brass text-dark-text dark:text-dark-text hover:bg-brass/10 transition-colors">
               Veranstaltungen
             </Button>
           </motion.div>
@@ -187,19 +183,19 @@ const Home: React.FC = () => {
       </section>
 
       <section className="py-20 px-4 bg-gradient-to-b from-transparent to-brass/5">
-        <div className="container mx-auto max-w-4xl text-center">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
-              Über Aethersalon 1889
+                <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 text-dark-text dark:text-dark-text">
+             Über <span className="block sm:inline">Aethersalon 1889</span>
             </h2>
             <div className="mb-8">
-              <div className="text-lg leading-relaxed columns-1 md:columns-2 text-justify" style={{ columnGap: '3rem' }}>
-                <p>
+              <div className="max-w-2xl mx-auto text-center">
+                <p className="text-lg leading-relaxed text-dark-text">
                   Seit 1889 widmen wir uns der faszinierenden Kunst des Steampunk. In unserer Werkstatt
                   entstehen einzigartige Kreationen, die Vergangenheit und Zukunft verbinden. Jedes
                   Stück erzählt seine eigene Geschichte und trägt den Geist der viktorianischen Ära
@@ -245,7 +241,7 @@ const Home: React.FC = () => {
   Ausgewählte Werke
 </h2>
 
-            <p className="text-lg">
+            <p className="text-lg text-dark-text">
               Entdecken Sie einzigartige Steampunk-Kreationen
             </p>
           </motion.div>
@@ -270,14 +266,14 @@ const Home: React.FC = () => {
               </h2>
             </div>
 
-            <p className="text-lg">
+            <p className="text-lg text-dark-text">
               Treffen Sie uns auf diesen Events
             </p>
           </motion.div>
 
           <EventList events={upcomingEvents} showAll={false} />
           <div className="mb-8 mt-8">
-            <ImageCarousel images={[sp1, sp2, sp3, sp4]} heightClass="h-[300px] md:h-[350px]" />
+            <ImageCarousel images={[sp1, sp2, sp3, sp4]} heightClass="h-[300px] md:h-[350px]" overlayOpacity={0} />
           </div>
         </div>
       </section>

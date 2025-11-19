@@ -45,14 +45,14 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
           <motion.div
             key={event.id}
             variants={fadeInUp}
-            className="mx-auto max-w-5xl px-4 p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-dark-bg/50 dark:bg-dark-bg/50"
+            className="mx-auto max-w-5xl px-4 p-6 border border-brass/30 rounded-lg hover:border-brass transition-all duration-300 bg-dark-bg/10 dark:bg-dark-bg/10"
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between">
               <div>
                 <h3 className="text-xl font-heading font-semibold text-dark-text dark:text-dark-text mb-2">
                   {event.title}
                 </h3>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-dark-text/80 dark:text-dark-text/80">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-dark-text dark:text-dark-text">
                   <span className="flex items-center">
                     <svg
                       className="w-5 h-5 mr-2 text-brass"
@@ -161,7 +161,7 @@ const EventList: React.FC<EventListProps> = ({ events, showAll = false }) => {
               </div>
               <Button
                 to={`/events/${(event as any).rawId || event.id}`}
-                size="sm"
+                
                 className="mt-4 md:mt-0 bg-brass text-dark-bg hover:bg-brass/90 transition-colors"
               >
                 Mehr erfahren

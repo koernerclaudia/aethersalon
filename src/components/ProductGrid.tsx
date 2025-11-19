@@ -23,9 +23,11 @@ interface Product {
 interface ProductGridProps {
   products: Product[];
   showAll?: boolean;
+  hideCategory?: boolean;
+  hideStock?: boolean;
 }
 
-const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) => {
+const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false, hideCategory = false, hideStock = false }) => {
   const fadeInUp = {
     hidden: { opacity: 0, y: 30 },
     visible: { opacity: 1, y: 0 },
@@ -82,7 +84,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
 
               {/* faint overlay button shown on hover, centered on image */}
               <Link
-                to={`/products/${product.id}`}
+                to={`/products/${(product as any).rawId || product.id}`}
                 className={
                   'absolute inset-0 flex items-center justify-center transition-opacity duration-200 ' +
                   'opacity-0 group-hover:opacity-100'
@@ -95,11 +97,11 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                 </span>
               </Link>
             </div>
-            <div className="p-6 bg-dark-bg/90 dark:bg-dark-bg/90">
+            <div className="p-6 bg-dark-bg/10 dark:bg-dark-bg/10">
               <div className="flex items-start justify-between">
                 <div>
                   {/* Tag pills showing "Art des Produkts" (split into individual tags when multiple) */}
-                  {(() => {
+                  { !hideCategory && (() => {
                     const tags = extractTags(product);
                     if (!tags || tags.length === 0) return null;
                     return (
@@ -123,17 +125,14 @@ const ProductGrid: React.FC<ProductGridProps> = ({ products, showAll = false }) 
                     {product.name}
                   </h3>
                   {product.shortDescription && (
-                    <p className="text-sm text-dark-text/80 mt-2">{product.shortDescription}</p>
+                    <p className="text-sm text-dark-text mt-2">{product.shortDescription}</p>
                   )}
                 </div>
               </div>
 
-              <div className="mt-4 text-sm text-dark-text/80">
-                {product.material && (
-                  <div className="mb-1">Material: <span className="font-medium">{product.material}</span></div>
-                )}
+              <div className="mt-4 text-sm text-dark-text">
                 {/* manufacturer intentionally omitted per request */}
-                {typeof product.stock === 'number' && (
+                {!hideStock && typeof product.stock === 'number' && (
                   <div>Bestand: <span className="font-medium">{product.stock}</span></div>
                 )}
               </div>

@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
               </li>
               <li>
                     <Link to="/products" className="text-theme-80 hover:text-brass transition-colors text-sm">
-                  Produkte
+                  Verkaufsobjekte
                 </Link>
               </li>
                <li>
@@ -73,6 +73,11 @@ const Footer: React.FC = () => {
                <li>
                     <Link to="/partners" className="text-theme-80 hover:text-brass transition-colors text-sm">
                  Partner
+                </Link>
+              </li>
+               <li>
+                    <Link to="/moebelstuecke" className="text-theme-80 hover:text-brass transition-colors text-sm">
+                 Möbelstücke
                 </Link>
               </li>
               </ul>

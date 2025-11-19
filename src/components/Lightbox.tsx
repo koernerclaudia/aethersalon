@@ -45,8 +45,6 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex = 0, onClose }) 
       aria-modal="true"
       aria-label="Image lightbox"
     >
-      {/* close button moved down next to pagination for better reachability */}
-
       <button
         onClick={prev}
         aria-label="Previous image"
@@ -55,11 +53,14 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex = 0, onClose }) 
         ‹
       </button>
 
-  <div className="max-w-[90%] md:max-w-[70%] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="max-w-[90%] md:max-w-[70%] flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <img
           src={images[index]}
           alt={`Image ${index + 1}`}
-          className="max-w-full max-h-[45vh] md:max-h-[70vh] rounded-lg shadow-lg object-contain"
+          className="rounded-lg shadow-lg max-h-[80vh] object-contain"
         />
       </div>
 
@@ -74,10 +75,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, startIndex = 0, onClose }) 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-xs flex items-center gap-4">
         <div className="opacity-95">{index + 1} / {images.length}</div>
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose?.();
-          }}
+          onClick={(e) => { e.stopPropagation(); onClose?.(); }}
           aria-label="Close"
           className="text-white text-lg leading-none p-2 rounded hover:bg-white/10"
         >

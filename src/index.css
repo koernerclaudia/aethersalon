@@ -28,6 +28,7 @@
   .btn {
     /* increase padding by 2px on all sides (was px-6 py-3 = 24/12px) */
     @apply inline-flex items-center justify-center leading-none rounded-full text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    @apply w-4/5 mx-auto md:w-auto;
     padding-left: 26px;
     padding-right: 26px;
     padding-top: 14px;
@@ -38,6 +39,7 @@
   .btn-sm {
     /* increase padding by 2px on all sides (was px-4 py-2 = 16/8px) */
     @apply inline-flex items-center justify-center leading-none rounded-full text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brass;
+    @apply w-4/5 mx-auto md:w-auto;
     padding-left: 18px;
     padding-right: 18px;
     padding-top: 10px;

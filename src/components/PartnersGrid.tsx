@@ -34,7 +34,7 @@ const PartnersGrid: React.FC<Props> = ({ partners, count = 4, className = '' }) 
   const items = (partners && partners.length > 0) ? partners : (ctxPartners.length > 0 ? ctxPartners : samplePartners);
 
   const renderItems = (list: Partner[]) => list.slice(0, count).map((p) => (
-    <motion.div key={p.id} variants={fadeInUp} className="group relative border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/50 hover:border-brass transition-all duration-300">
+    <motion.div key={p.id} variants={fadeInUp} className="group relative border border-brass/30 rounded-lg overflow-hidden bg-dark-bg/10 hover:border-brass transition-all duration-300">
       <div className="relative w-full h-[250px] bg-dark-bg/10 flex items-center justify-center overflow-hidden">
         {p.imageUrl ? (
           <img src={p.imageUrl} alt={p.name} className="w-full h-[250px] object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -51,7 +51,7 @@ const PartnersGrid: React.FC<Props> = ({ partners, count = 4, className = '' }) 
           className={'absolute inset-0 flex items-center justify-center transition-opacity duration-200 ' + 'opacity-0 group-hover:opacity-100'}
           aria-label={`Öffne Details zu ${p.name}`}
         >
-          <span className="inline-flex items-center justify-center px-3 py-2 bg-black/25 backdrop-blur-sm rounded-full text-sm text-white/90 border border-white/10 hover:bg-black/30">
+          <span className="inline-flex items-center justify-center px-3 py-2 bg-black/10 backdrop-blur-sm rounded-full text-sm text-white/90 border border-white/10 hover:bg-black/20">
             Details
           </span>
         </Link>

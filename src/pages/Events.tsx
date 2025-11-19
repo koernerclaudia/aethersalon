@@ -225,13 +225,13 @@ const Events: React.FC = () => {
           <h1 className="text-5xl md:text-6xl font-heading font-bold text-dark-text dark:text-dark-text mb-6">
             Veranstaltungen
           </h1>
-          <p className="text-lg text-dark-text/80 dark:text-dark-text/80 max-w-2xl mx-auto">
+          <p className="text-lg text-dark-text dark:text-dark-text max-w-2xl mx-auto">
             Besuchen Sie uns auf diesen Events und tauchen Sie ein in die faszinierende Welt
             des Steampunk. Wir freuen uns auf Ihr Kommen!
           </p>
         </motion.div>
 </div>
-<div className="container mx-auto max-w-5xl">
+<div className="mx-auto max-w-5xl px-4">
         {/* Status */}
         {loading && (
           <div className="text-center mb-6 text-sm text-dark-text/70">Lade Veranstaltungen…</div>
@@ -290,7 +290,7 @@ const Events: React.FC = () => {
               Wir freuen uns darauf, Sie persönlich kennenzulernen!
             </p>
             <a
-              href="mailto:info@aethersalon1889.de?subject=Event-Anfrage"
+              href="mailto:info@aethersalon1889.de?subject=Event-Anfrage" target='_blank'
               className="btn bg-brass text-dark-bg hover:bg-brass/90"
             >
               Kontakt aufnehmen

@@ -28,9 +28,16 @@ const Header: React.FC = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Veranstaltungen', path: '/events' },
-    { name: 'Produkte', path: '/products' },
+    { name: 'Verkaufsobjekte', path: '/products' },
     { name: 'Makerspace', path: '/workshop' },
     { name: 'Über Steampunk', path: '/history' },
+  ];
+
+  // Links that should appear only inside the mobile (hamburger) menu
+  const mobileOnlyLinks = [
+    { name: 'Über Uns', path: '/about' },
+    { name: 'Partner', path: '/partners' },
+     { name: 'Möbelstücke', path: '/moebelstuecke' },
   ];
 
   return (
@@ -166,6 +173,18 @@ const Header: React.FC = () => {
                           ? 'text-brass'
                           : 'text-white hover:text-brass'
                       }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                {/* Mobile-only links (do not appear in desktop nav) */}
+                {mobileOnlyLinks.map((link) => (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`w-full text-center text-lg font-heading transition-colors ${
+                      location.pathname === link.path ? 'text-brass' : 'text-white hover:text-brass'
+                    }`}
                   >
                     {link.name}
                   </Link>

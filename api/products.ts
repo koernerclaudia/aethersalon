@@ -14,8 +14,10 @@ const AIRTABLE_PRODUCTS_TABLE = process.env.AIRTABLE_PRODUCTS_TABLE;
 // sorted by the 'Reihenfolge' column). Can be overridden via env var.
 const AIRTABLE_PRODUCTS_VIEW = process.env.AIRTABLE_PRODUCTS_VIEW || 'Order'; // optional: use Airtable view ordering if provided
 const AIRTABLE_ORDER_FIELD = process.env.AIRTABLE_ORDER_FIELD || 'Reihenfolge';
+const AIRTABLE_PARTNERS_TABLE = process.env.AIRTABLE_PARTNERS_TABLE || 'Partner';
+const AIRTABLE_PERSONS_TABLE = process.env.AIRTABLE_PERSONS_TABLE || 'Personen';
 
-function normalize(records: AirtableRecord[]) {
+function normalize(records: AirtableRecord[], partnerMap: Record<string, string> = {}) {
   // Map the German Airtable schema the user provided to our product shape.
   // If a field is missing we'll use reasonable fallbacks.
   const placeholderImage =
@@ -61,8 +63,8 @@ for (const k of attachmentFields) {
 }
 
     // Description & short description
-    const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
-    const shortDescription = f.Kurzbeschreibung || f.Kurzbeschreibung || '';
+    const description = f.Beschreibung || f.Beschreibung || f.Kurzbeschreibung || f['Kurz-Beschreibung'] || '';
+    const shortDescription = f['Kurz-Beschreibung'] || f.Kurzbeschreibung || f.Kurzbeschreibung || '';
 
     // Material / condition (Beschaffenheit)
     const material = f.Beschaffenheit || f.Beschaffenheit || '';
@@ -73,14 +75,46 @@ for (const k of attachmentFields) {
     // Stock / Bestand
     const stock = typeof f.Bestand === 'number' ? f.Bestand : parseInt(String(f.Bestand || ''), 10) || 0;
 
-    // Manufacturer / Hergestellt von / Herstellername (may be array of names or linked record ids)
+    // Manufacturer / Hergestellt von
+    // The products table uses the 'Hergestellt von' column which can be a
+    // linked field (array of record ids) or free text. We normalize into
+    // arrays for compatibility with multi-valued entries, and keep the first
+    // value in `manufacturer`/`manufacturerId` for backwards compatibility.
+    const manufacturers: string[] = [];
+    const manufacturerIds: string[] = [];
     let manufacturer: string | undefined = undefined;
-    if (Array.isArray(f['Herstellername']) && f['Herstellername'].length > 0) {
-      manufacturer = String(f['Herstellername'][0]);
-    } else if (Array.isArray(f['Hergestellt von']) && f['Hergestellt von'].length > 0) {
-      manufacturer = String(f['Hergestellt von'][0]);
-    } else if (typeof f['Herstellername'] === 'string') {
-      manufacturer = f['Herstellername'];
+    let manufacturerId: string | undefined = undefined;
+
+    const hv = f['Hergestellt von'];
+    if (Array.isArray(hv) && hv.length > 0) {
+      for (const item of hv) {
+        if (typeof item === 'string' && item.startsWith('rec')) {
+          manufacturerIds.push(item);
+          manufacturers.push(partnerMap[item] || item);
+        } else if (typeof item === 'string') {
+          manufacturers.push(item);
+        } else if (item && typeof item === 'object' && item.id) {
+          const id = String(item.id);
+          manufacturerIds.push(id);
+          manufacturers.push(partnerMap[id] || id);
+        }
+      }
+    } else if (typeof hv === 'string' && hv.trim()) {
+      // Sometimes the field might contain a comma/semicolon separated list
+      const parts = hv.split(/[;,\/\n]+/).map((s: string) => s.trim()).filter(Boolean);
+      if (parts.length > 1) {
+        for (const p of parts) manufacturers.push(p);
+      } else {
+        // single string value
+        manufacturers.push(hv);
+      }
+    }
+
+    if (manufacturers.length > 0) {
+      manufacturer = manufacturers[0];
+    }
+    if (manufacturerIds.length > 0) {
+      manufacturerId = manufacturerIds[0];
     }
 
     // Price parsing (Einzelpreis)
@@ -100,6 +134,9 @@ for (const k of attachmentFields) {
       sku,
       stock,
       manufacturer,
+      manufacturerId,
+      manufacturers,
+      manufacturerIds,
       price,
       rawId: r.id,
       raw: f,
@@ -172,7 +209,135 @@ export default async function handler(req: any, res: any) {
     } while (offset);
 
     // Normalize the full list (normalize uses the array index as stable numeric id)
-    const products = normalize(allRecords);
+    // Fetch partners and persons tables to resolve linked manufacturer ids to names
+    const partnerMap: Record<string, string> = {};
+    try {
+      let pOffset: string | undefined = undefined;
+      do {
+        const pUrl: string = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+          AIRTABLE_PARTNERS_TABLE
+        )}?pageSize=100${pOffset ? `&offset=${pOffset}` : ''}`;
+        const pr = await fetch(pUrl, {
+          headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' },
+        });
+        if (!pr.ok) break;
+        const pPayload: any = await pr.json();
+        const pRecords: AirtableRecord[] = pPayload.records || [];
+        for (const rec of pRecords) {
+          const name = rec.fields?.Name || rec.fields?.Titel || rec.fields?.Name_des_Partners || rec.fields?.name || '';
+          if (rec.id) partnerMap[rec.id] = String(name || rec.id);
+        }
+        pOffset = pPayload.offset;
+      } while (pOffset);
+    } catch (e) {
+      // ignore partner fetch errors — normalize will fall back to ids
+    }
+
+    // Also try to load the Personen table (people) and merge into the same map
+    try {
+      let perOffset: string | undefined = undefined;
+      do {
+        const perUrl: string = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+          AIRTABLE_PERSONS_TABLE
+        )}?pageSize=100${perOffset ? `&offset=${perOffset}` : ''}`;
+        const pr = await fetch(perUrl, {
+          headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' },
+        });
+        if (!pr.ok) break;
+        const pPayload: any = await pr.json();
+        const pRecords: AirtableRecord[] = pPayload.records || [];
+        for (const rec of pRecords) {
+          // Prefer common person name fields: Vorname + Nachname or Name
+          const fields = rec.fields || {};
+          const nameParts: string[] = [];
+          if (fields.Vorname) nameParts.push(String(fields.Vorname));
+          if (fields.Nachname) nameParts.push(String(fields.Nachname));
+          const name = nameParts.length > 0 ? nameParts.join(' ') : (fields.Name || fields.Titel || fields.name || '');
+          if (rec.id) partnerMap[rec.id] = String(name || rec.id);
+        }
+        perOffset = pPayload.offset;
+      } while (perOffset);
+    } catch (e) {
+      // ignore person fetch errors
+    }
+
+    // Some product records may reference partner record ids that weren't present
+    // in the partners list (or the partners table is large). Try to resolve any
+    // missing partner ids by requesting the specific record endpoint for those ids.
+    const missingIds = new Set<string>();
+    for (const r of allRecords) {
+      const f = r.fields || {};
+      const candidates = [] as any[];
+      if (Array.isArray(f['Hergestellt von'])) candidates.push(...f['Hergestellt von']);
+      if (typeof f['Hergestellt von'] === 'string') candidates.push(f['Hergestellt von']);
+      for (const c of candidates) {
+        if (typeof c === 'string' && c.startsWith('rec') && !partnerMap[c]) missingIds.add(c);
+      }
+    }
+
+    if (missingIds.size > 0) {
+      try {
+        for (const mid of Array.from(missingIds)) {
+          try {
+            const recUrl = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(
+              AIRTABLE_PARTNERS_TABLE
+            )}/${encodeURIComponent(mid)}`;
+            const rr = await fetch(recUrl, {
+              headers: { Authorization: `Bearer ${AIRTABLE_API_KEY}`, 'Content-Type': 'application/json' },
+            });
+            if (!rr.ok) continue;
+            const recPayload: any = await rr.json();
+            const recFields = recPayload.fields || {};
+            const name = recFields?.Name || recFields?.Titel || recFields?.name || '';
+            partnerMap[mid] = String(name || mid);
+          } catch (inner) {
+            // ignore per-record errors
+          }
+        }
+      } catch (e) {
+        // ignore errors resolving missing ids
+      }
+    }
+
+    // Support optional query parameters to control inclusion/filtering of
+    // furniture ("Möbelstück"). By default furniture is excluded
+    // (to match previous behaviour). Callers can request furniture with
+    // `?includeFurniture=true` or request only a specific "Art des Produkts"
+    // via `?only=Möbelstück`.
+    const urlObj = typeof req?.url === 'string' ? new URL(req.url, 'http://localhost') : null;
+    const onlyParam = (req && (req.query as any)?.only) || (urlObj && urlObj.searchParams.get('only')) || null;
+    const includeFurnitureParam = (req && (req.query as any)?.includeFurniture) || (urlObj && urlObj.searchParams.get('includeFurniture')) || null;
+
+    let visibleRecords = allRecords;
+
+    // If `only` is specified, filter to only those records whose
+    // "Art des Produkts" matches the given string (supports array/string).
+    if (typeof onlyParam === 'string' && onlyParam.trim().length > 0) {
+      const onlyVal = String(onlyParam).trim();
+      visibleRecords = allRecords.filter((r) => {
+        const f = r.fields || {};
+        const art = f['Art des Produkts'];
+        if (Array.isArray(art)) return art.map(String).some((s) => s.trim() === onlyVal);
+        if (typeof art === 'string') return art.trim() === onlyVal;
+        return false;
+      });
+    } else if (String(includeFurnitureParam).toLowerCase() === 'true') {
+      // include all records — no filtering required
+      visibleRecords = allRecords;
+    } else {
+      // Default behaviour: exclude Möbelstück records from the public API
+      visibleRecords = allRecords.filter((r) => {
+        const f = r.fields || {};
+        const art = f['Art des Produkts'];
+        if (Array.isArray(art)) {
+          return !art.map(String).some((s) => s.trim() === 'Möbelstück');
+        }
+        if (typeof art === 'string') return art.trim() !== 'Möbelstück';
+        return true;
+      });
+    }
+
+    const products = normalize(visibleRecords, partnerMap);
 
     // Cache for a short time on the edge
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
